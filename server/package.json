@@ -1,0 +1,19 @@
+{
+  "name": "real-estate-analytics-server",
+  "version": "1.0.0",
+  "description": "Express Node.js API with PostGIS Geospatial Engine and Mortgage Analytics",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test test/mortgageEngine.test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
+  }
+}
