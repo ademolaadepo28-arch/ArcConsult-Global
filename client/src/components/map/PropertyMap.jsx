@@ -14,7 +14,8 @@ export default function PropertyMap({
   centerCoords = { lat: 30.2672, lng: -97.7431 },
   schools = [],
   executionTimeMs = 0,
-  engineInfo = ''
+  engineInfo = '',
+  focusLocation = null
 }) {
   const Leaflet = (typeof window !== 'undefined' && window.L) ? window.L : L;
   const mapContainerRef = useRef(null);
@@ -113,6 +114,18 @@ export default function PropertyMap({
       });
     }
   }, [selectedProperty]);
+
+  // Center on custom focusLocation (e.g. school clicked or center property clicked)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !focusLocation) return;
+
+    if (focusLocation.lat && focusLocation.lng) {
+      map.flyTo([focusLocation.lat, focusLocation.lng], focusLocation.zoom || 15, {
+        duration: 0.8
+      });
+    }
+  }, [focusLocation]);
 
   // Controls
   const handleZoomIn = () => mapInstanceRef.current?.zoomIn();

@@ -1,11 +1,12 @@
 // App.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropertyMap from './components/map/PropertyMap';
 import FilterDrawer from './components/filters/FilterDrawer';
 import AmortizationChart from './components/analytics/AmortizationChart';
 import YieldBreakdown from './components/analytics/YieldBreakdown';
 import SchoolMetricsBadge from './components/schools/SchoolMetricsBadge';
 import PortfolioComparisonModal from './components/portfolio/PortfolioComparisonModal';
+import ArchitectureModal from './components/modals/ArchitectureModal';
 import { useSpatialSearch } from './hooks/useSpatialSearch';
 import { propertyApi, analyticsApi, portfolioApi } from './services/api';
 import {
@@ -26,7 +27,12 @@ import {
   ExternalLink,
   MapPin,
   BarChart3,
-  ListFilter
+  ListFilter,
+  Cpu,
+  Copy,
+  Check,
+  RefreshCw,
+  Share2
 } from 'lucide-react';
 
 export default function App() {
@@ -51,6 +57,18 @@ export default function App() {
   const [propertyDetails, setPropertyDetails] = useState(null);
   const [allSchools, setAllSchools] = useState([]);
   const [savedPortfolios, setSavedPortfolios] = useState([]);
+
+  // Spec #05 Architecture modal state
+  const [isSpecOpen, setIsSpecOpen] = useState(false);
+
+  // Map focus target (school or property location)
+  const [focusLocation, setFocusLocation] = useState(null);
+
+  // Listing sort filter: 'DEFAULT' | 'PRICE_ASC' | 'PRICE_DESC' | 'BEDS' | 'SQFT'
+  const [sortBy, setSortBy] = useState('DEFAULT');
+
+  // Copy feedback state
+  const [copiedAddress, setCopiedAddress] = useState(false);
 
   // Responsive Mobile/Tablet Navigation Tab: 'MAP' | 'ANALYTICS' | 'SAVED'
   const [mobileViewTab, setMobileViewTab] = useState('MAP');
@@ -92,6 +110,16 @@ export default function App() {
       handleSelectProperty(properties[0], false);
     }
   }, [properties]);
+
+  // Derived sorted listings list
+  const sortedProperties = useMemo(() => {
+    const list = [...properties];
+    if (sortBy === 'PRICE_ASC') return list.sort((a, b) => a.price_cents - b.price_cents);
+    if (sortBy === 'PRICE_DESC') return list.sort((a, b) => b.price_cents - a.price_cents);
+    if (sortBy === 'BEDS') return list.sort((a, b) => b.bedrooms - a.bedrooms);
+    if (sortBy === 'SQFT') return list.sort((a, b) => b.square_feet - a.square_feet);
+    return list;
+  }, [properties, sortBy]);
 
   // Load single property details + spatial join schools when selected
   const handleSelectProperty = async (prop, shouldSwitchMobileView = false) => {
@@ -199,9 +227,14 @@ export default function App() {
               <h1 className="text-sm sm:text-lg font-extrabold text-white tracking-tight font-heading">
                 ArcConsult <span className="gradient-text-emerald">Analytics</span>
               </h1>
-              <span className="hidden sm:inline-block badge-tag badge-emerald font-mono text-[10px]">
+              <button
+                type="button"
+                onClick={() => setIsSpecOpen(true)}
+                className="hidden sm:inline-flex badge-tag badge-emerald font-mono text-[10px] cursor-pointer hover:bg-emerald-400 hover:text-slate-950 transition-all touch-active"
+                title="View Spec #05 Architecture, PostGIS Queries & Demo Token"
+              >
                 Spec #05
-              </span>
+              </button>
             </div>
             <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block">
               Geospatial Vector Discovery • PostGIS Engine • 30-Year Mortgage & Yield Projections
@@ -210,16 +243,34 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Spatial Performance HUD */}
-          <div className="hidden md:flex items-center gap-2 bg-slate-900/80 px-2.5 py-1.5 rounded-xl border border-white/10 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          {/* Spatial Performance HUD - Click to Refetch */}
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="hidden md:flex items-center gap-2 bg-slate-900/80 hover:bg-slate-900 px-2.5 py-1.5 rounded-xl border border-white/10 hover:border-emerald-500/40 text-xs transition-all cursor-pointer group touch-active"
+            title="Click to re-query PostGIS engine"
+          >
+            <span className={`w-2 h-2 rounded-full bg-emerald-400 ${loading ? 'animate-ping' : ''}`} />
             <span className="text-slate-300 font-mono text-[11px]">{properties.length} Listings</span>
             <span className="text-white/20">|</span>
             <span className="text-emerald-400 font-mono font-bold text-[11px]">{executionTimeMs}ms</span>
-          </div>
+            <RefreshCw className={`w-3 h-3 text-slate-400 group-hover:text-emerald-400 transition-transform ${loading ? 'animate-spin' : ''}`} />
+          </button>
+
+          {/* Architecture / Spec Modal Button */}
+          <button
+            type="button"
+            onClick={() => setIsSpecOpen(true)}
+            className="btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/10 touch-active"
+            title="View system architecture, PostGIS queries, and demo JWT token"
+          >
+            <Cpu className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Spec & Architecture</span>
+          </button>
 
           {/* Compare Saved Button */}
           <button
+            type="button"
             onClick={handleOpenComparison}
             className="btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 hover:border-emerald-500/40 touch-active"
           >
@@ -278,6 +329,7 @@ export default function App() {
               schools={allSchools}
               executionTimeMs={executionTimeMs}
               engineInfo={engineInfo}
+              focusLocation={focusLocation}
             />
           </div>
 
@@ -293,17 +345,41 @@ export default function App() {
             onReset={() => updateFilters({ minPrice: '', maxPrice: '', minBeds: '', propertyType: 'ALL' })}
           />
 
-          {/* Horizontal / Grid Listing Cards Preview */}
+          {/* Horizontal / Grid Listing Cards Preview with Sorting */}
           <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
               <span className="font-semibold uppercase tracking-wider text-slate-300">
                 Visible Map Properties ({properties.length})
               </span>
-              <span className="text-[11px] text-slate-400">Tap card to inspect financial model</span>
+
+              {/* Interactive Sorting Controls */}
+              <div className="flex items-center gap-1 bg-slate-900/80 p-0.5 rounded-lg border border-white/5 text-[11px]">
+                <span className="text-slate-500 px-1 hidden sm:inline">Sort:</span>
+                {[
+                  { id: 'DEFAULT', label: 'Default' },
+                  { id: 'PRICE_ASC', label: 'Price ↑' },
+                  { id: 'PRICE_DESC', label: 'Price ↓' },
+                  { id: 'BEDS', label: 'Beds' },
+                  { id: 'SQFT', label: 'SqFt' }
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setSortBy(s.id)}
+                    className={`px-2 py-0.5 rounded transition-all touch-active ${
+                      sortBy === s.id
+                        ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[380px] overflow-y-auto pr-1">
-              {properties.map((prop) => {
+              {sortedProperties.map((prop) => {
                 const isSelected = selectedProperty?.id === prop.id;
                 const bookmarked = isBookmarked(prop.id);
 
@@ -377,9 +453,14 @@ export default function App() {
                       <span className="badge-tag badge-emerald text-[9px] sm:text-[10px]">
                         {selectedProperty.status}
                       </span>
-                      <span className="badge-tag badge-cyan text-[9px] sm:text-[10px]">
+                      <button
+                        type="button"
+                        onClick={() => updateFilters({ propertyType: selectedProperty.property_type })}
+                        className="badge-tag badge-cyan text-[9px] sm:text-[10px] cursor-pointer hover:bg-cyan-400 hover:text-slate-950 transition-colors"
+                        title={`Filter listings by ${selectedProperty.property_type.replace('_', ' ')}`}
+                      >
                         {selectedProperty.property_type.replace('_', ' ')}
-                      </span>
+                      </button>
                     </div>
                     <h2 className="text-lg sm:text-xl font-extrabold text-white leading-tight">
                       {selectedProperty.title}
@@ -390,6 +471,7 @@ export default function App() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => handleToggleBookmark(selectedProperty.id)}
                     className={`btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 touch-active ${
                       isBookmarked(selectedProperty.id) ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10' : ''
@@ -404,6 +486,59 @@ export default function App() {
                       <>
                         <Bookmark className="w-4 h-4 text-slate-400" />
                         <span className="hidden sm:inline">Save</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Interactive Action Bar: Map Center, Directions Link, Share/Copy */}
+                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-white/5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFocusLocation({ lat: selectedProperty.lat, lng: selectedProperty.lng, zoom: 16 });
+                      if (window.innerWidth < 1024) setMobileViewTab('MAP');
+                    }}
+                    className="py-1 px-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-1.5 transition-colors touch-active"
+                    title="Center listing on map"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>Center on Map</span>
+                  </button>
+
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      `${selectedProperty.street_address}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zip_code}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-1 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs flex items-center gap-1.5 transition-colors touch-active"
+                    title="Open address in Google Maps"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Google Maps Directions</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const shareText = `${selectedProperty.title} - ${selectedProperty.street_address}, ${selectedProperty.city}: $${(selectedProperty.price_cents / 100).toLocaleString()}`;
+                      navigator.clipboard.writeText(shareText);
+                      setCopiedAddress(true);
+                      setTimeout(() => setCopiedAddress(false), 2000);
+                    }}
+                    className="py-1 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs flex items-center gap-1.5 transition-colors touch-active sm:ml-auto"
+                    title="Copy property summary to clipboard"
+                  >
+                    {copiedAddress ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy Details</span>
                       </>
                     )}
                   </button>
@@ -511,7 +646,13 @@ export default function App() {
               )}
 
               {activeInspectorTab === 'SCHOOLS' && (
-                <SchoolMetricsBadge schools={propertyDetails?.schools || []} />
+                <SchoolMetricsBadge
+                  schools={propertyDetails?.schools || []}
+                  onSelectSchool={(school) => {
+                    setFocusLocation({ lat: school.lat, lng: school.lng, zoom: 16 });
+                    if (window.innerWidth < 1024) setMobileViewTab('MAP');
+                  }}
+                />
               )}
             </>
           ) : (
@@ -543,12 +684,58 @@ export default function App() {
         </div>
       )}
 
+      {/* Footer with interactive quick links */}
+      <footer className="border-t border-white/10 bg-[#06090e] px-4 py-6 mt-8">
+        <div className="max-w-[1680px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>ArcConsult Global • Enterprise Real Estate & Quantitative Mortgages</span>
+          </div>
+          <div className="flex items-center gap-4 flex-wrap justify-center">
+            <button
+              type="button"
+              onClick={() => setIsSpecOpen(true)}
+              className="text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
+            >
+              Spec #05 Architecture
+            </button>
+            <button
+              type="button"
+              onClick={handleOpenComparison}
+              className="text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
+            >
+              Portfolio Comparison ({savedPortfolios.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setFocusLocation({ lat: 30.2672, lng: -97.7431, zoom: 13 });
+                if (window.innerWidth < 1024) setMobileViewTab('MAP');
+              }}
+              className="text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
+            >
+              Recenter Austin Metro
+            </button>
+          </div>
+        </div>
+      </footer>
+
       {/* Side-by-Side Portfolio Comparison Modal */}
       <PortfolioComparisonModal
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}
         comparisons={comparisonResults}
         onSelectProperty={(p) => handleSelectProperty(p, true)}
+      />
+
+      {/* Spec #05 Architecture, PostGIS Queries & JWT Auth Modal */}
+      <ArchitectureModal
+        isOpen={isSpecOpen}
+        onClose={() => setIsSpecOpen(false)}
+        engineInfo={engineInfo}
+        executionTimeMs={executionTimeMs}
+        totalProperties={properties.length}
+        totalSchools={allSchools.length}
       />
     </div>
   );

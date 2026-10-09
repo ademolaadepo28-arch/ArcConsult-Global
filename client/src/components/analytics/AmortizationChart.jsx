@@ -196,47 +196,79 @@ export default function AmortizationChart({
         </div>
       </div>
 
-      {/* Primary Payment Cards Grid (2x2 on mobile, 4x1 on desktop) */}
+      {/* Primary Payment Cards Grid (Clickable to switch visualizer tabs) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
+        <button
+          type="button"
+          onClick={() => setActiveTab('CURVE')}
+          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+            activeTab === 'CURVE'
+              ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+              : 'bg-slate-900/60 border-white/5 hover:border-white/20'
+          }`}
+          title="Click to view Paydown Curve"
+        >
           <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
             Total Monthly Payment
           </span>
-          <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono">
+          <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono block">
             ${Math.round(summary.totalMonthlyPaymentUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">PITI + HOA + PMI</span>
-        </div>
+        </button>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
+        <button
+          type="button"
+          onClick={() => setActiveTab('BREAKDOWN')}
+          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+            activeTab === 'BREAKDOWN'
+              ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+              : 'bg-slate-900/60 border-white/5 hover:border-white/20'
+          }`}
+          title="Click to view Annual P&I Breakdown"
+        >
           <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
             Principal & Interest
           </span>
-          <span className="text-lg sm:text-xl font-bold text-white font-mono">
+          <span className="text-lg sm:text-xl font-bold text-white font-mono block">
             ${Math.round(summary.monthlyPrincipalInterestUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">Base Debt Service</span>
-        </div>
+        </button>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
+        <button
+          type="button"
+          onClick={() => setActiveTab('SENSITIVITY')}
+          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+            activeTab === 'SENSITIVITY'
+              ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+              : 'bg-slate-900/60 border-white/5 hover:border-white/20'
+          }`}
+          title="Click to view Rate Sensitivity Matrix"
+        >
           <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
             Total Interest Paid
           </span>
-          <span className="text-lg sm:text-xl font-bold text-rose-400 font-mono">
+          <span className="text-lg sm:text-xl font-bold text-rose-400 font-mono block">
             ${Math.round(summary.totalInterestPaidUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">{loanYears} Years Life</span>
-        </div>
+        </button>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
+        <button
+          type="button"
+          onClick={() => setActiveTab('CURVE')}
+          className="text-left bg-slate-900/60 hover:border-white/20 p-3 rounded-xl border border-white/5 transition-all touch-active"
+          title="Click to view Loan Balance Curve"
+        >
           <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
             Loan Principal
           </span>
-          <span className="text-lg sm:text-xl font-bold text-cyan-400 font-mono">
+          <span className="text-lg sm:text-xl font-bold text-cyan-400 font-mono block">
             ${Math.round(summary.principalUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">{100 - downPaymentPercent}% LTV</span>
-        </div>
+        </button>
       </div>
 
       {/* Interactive Controls Bar: Down Payment, Interest Rate, Term, Extra Monthly */}
@@ -371,12 +403,23 @@ export default function AmortizationChart({
             step="50"
             value={extraMonthlyPrincipalUsd}
             onChange={(e) => onParamChange('extraMonthlyPrincipalUsd', Number(e.target.value))}
-            className="w-full mt-2"
+            className="w-full mt-1 mb-1.5"
           />
-          <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-            <span>$0</span>
-            <span>$1,000</span>
-            <span>$2,000</span>
+          <div className="flex gap-1">
+            {[0, 100, 250, 500].map((amt) => (
+              <button
+                key={amt}
+                type="button"
+                onClick={() => onParamChange('extraMonthlyPrincipalUsd', amt)}
+                className={`flex-1 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                  extraMonthlyPrincipalUsd === amt
+                    ? 'border-emerald-500 text-emerald-300 bg-emerald-500/10'
+                    : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
+                }`}
+              >
+                {amt === 0 ? '$0' : `+$${amt}`}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -416,14 +459,25 @@ export default function AmortizationChart({
                   return (
                     <tr
                       key={item.rate}
-                      className={`hover:bg-white/5 ${
-                        item.isCurrent ? 'bg-emerald-500/10 font-bold text-emerald-300' : 'text-slate-300'
+                      onClick={() => onParamChange && onParamChange('annualRate', item.rate)}
+                      title={`Click to set interest rate to ${item.rate}%`}
+                      className={`cursor-pointer transition-colors ${
+                        item.isCurrent
+                          ? 'bg-emerald-500/20 font-bold text-emerald-300 ring-1 ring-inset ring-emerald-500/30'
+                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
                       }`}
                     >
-                      <td className="py-2 px-2.5 font-mono">{item.rate}% {item.isCurrent && '★'}</td>
-                      <td className="py-2 px-2.5 font-mono">${Math.round(item.monthlyPaymentUsd).toLocaleString()}</td>
-                      <td className="py-2 px-2.5 font-mono hidden sm:table-cell">${Math.round(item.totalCostUsd - summary.principalUsd).toLocaleString()}</td>
-                      <td className="py-2 px-2.5 font-mono">
+                      <td className="py-2.5 px-2.5 font-mono flex items-center gap-1.5">
+                        <span>{item.rate}%</span>
+                        {item.isCurrent && (
+                          <span className="text-[10px] bg-emerald-500/30 text-emerald-300 px-1.5 py-0.2 rounded font-sans font-bold">
+                            Active
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-2.5 font-mono">${Math.round(item.monthlyPaymentUsd).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono hidden sm:table-cell">${Math.round(item.totalCostUsd - summary.principalUsd).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono font-semibold">
                         {diff === 0 ? '—' : (diff > 0 ? `+$${Math.round(diff)}` : `-$${Math.round(Math.abs(diff))}`)}
                       </td>
                     </tr>

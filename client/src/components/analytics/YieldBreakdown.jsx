@@ -143,42 +143,78 @@ export default function YieldBreakdown({
         </div>
       </div>
 
-      {/* Yield Metrics 4-Box Grid (2x2 on mobile, 4x1 on desktop) */}
+      {/* Yield Metrics 4-Box Grid (Interactive Clickable Cards) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
-            Gross Rental Yield
-          </span>
+        <div
+          onClick={() => setViewTab('CASHFLOW')}
+          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none ${
+            viewTab === 'CASHFLOW'
+              ? 'bg-slate-900/90 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+              : 'bg-slate-900/60 border-white/5 hover:border-cyan-500/30 hover:bg-slate-900/80'
+          }`}
+          title="Click to view Revenue Breakdown donut chart"
+        >
+          <div className="flex items-center justify-between mb-0.5">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+              Gross Rental Yield
+            </span>
+            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono">Chart ↗</span>
+          </div>
           <span className="text-lg sm:text-xl font-extrabold text-cyan-400 font-mono">
             {metrics.grossRentalYieldPercent}%
           </span>
           <span className="text-[10px] text-slate-500 block">Annual Rent / Price</span>
         </div>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
-            Net Cap Rate
-          </span>
+        <div
+          onClick={() => setViewTab('EQUITY')}
+          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none ${
+            viewTab === 'EQUITY'
+              ? 'bg-slate-900/90 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+              : 'bg-slate-900/60 border-white/5 hover:border-emerald-500/30 hover:bg-slate-900/80'
+          }`}
+          title="Click to view 10-Yr Equity Growth projection"
+        >
+          <div className="flex items-center justify-between mb-0.5">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+              Net Cap Rate
+            </span>
+            <span className="text-[9px] text-emerald-400/60 group-hover:text-emerald-300 font-mono">Chart ↗</span>
+          </div>
           <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono">
             {metrics.capRatePercent}%
           </span>
           <span className="text-[10px] text-slate-500 block">NOI / Asset Price</span>
         </div>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
-            Cash-on-Cash Return
-          </span>
+        <div
+          onClick={() => setViewTab('EQUITY')}
+          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group select-none"
+          title="Click to view 10-Yr Equity Growth projection"
+        >
+          <div className="flex items-center justify-between mb-0.5">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+              Cash-on-Cash
+            </span>
+            <span className="text-[9px] text-indigo-400/60 group-hover:text-indigo-300 font-mono">Chart ↗</span>
+          </div>
           <span className={`text-lg sm:text-xl font-bold font-mono ${metrics.cashOnCashReturnPercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {metrics.cashOnCashReturnPercent}%
           </span>
           <span className="text-[10px] text-slate-500 block">Net Cash / Initial Equity</span>
         </div>
 
-        <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5">
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
-            Monthly Net Cash Flow
-          </span>
+        <div
+          onClick={() => setViewTab('CASHFLOW')}
+          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all cursor-pointer group select-none"
+          title="Click to view Revenue Breakdown donut chart"
+        >
+          <div className="flex items-center justify-between mb-0.5">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+              Net Cash Flow
+            </span>
+            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono">Chart ↗</span>
+          </div>
           <span className={`text-lg sm:text-xl font-bold font-mono ${metrics.monthlyCashFlowUsd >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {metrics.monthlyCashFlowUsd >= 0 ? `+$${Math.round(metrics.monthlyCashFlowUsd)}` : `-$${Math.round(Math.abs(metrics.monthlyCashFlowUsd))}`}
           </span>
@@ -186,7 +222,7 @@ export default function YieldBreakdown({
         </div>
       </div>
 
-      {/* Investor Assumptions Controls */}
+      {/* Investor Assumptions Controls & Quick Presets */}
       <div className="bg-slate-950/60 p-3.5 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
         <div>
           <div className="flex justify-between text-slate-300 font-medium mb-1">
@@ -216,6 +252,22 @@ export default function YieldBreakdown({
               <Plus className="w-3 h-3" />
             </button>
           </div>
+          <div className="flex gap-1">
+            {[3500, 4800, 6500, 8500].map((rentVal) => (
+              <button
+                key={rentVal}
+                type="button"
+                onClick={() => onParamChange('estimatedRentUsd', rentVal)}
+                className={`flex-1 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                  estimatedRentUsd === rentVal
+                    ? 'border-cyan-500 text-cyan-300 bg-cyan-500/10'
+                    : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
+                }`}
+              >
+                ${rentVal / 1000}k
+              </button>
+            ))}
+          </div>
         </div>
 
         <div>
@@ -230,8 +282,24 @@ export default function YieldBreakdown({
             step="0.5"
             value={appreciationPercent}
             onChange={(e) => onParamChange('appreciationPercent', Number(e.target.value))}
-            className="w-full mt-2"
+            className="w-full mt-1 mb-1.5"
           />
+          <div className="flex gap-1">
+            {[2.0, 3.5, 5.0, 7.0].map((rate) => (
+              <button
+                key={rate}
+                type="button"
+                onClick={() => onParamChange('appreciationPercent', rate)}
+                className={`flex-1 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                  appreciationPercent === rate
+                    ? 'border-cyan-500 text-cyan-300 bg-cyan-500/10'
+                    : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
+                }`}
+              >
+                {rate}%
+              </button>
+            ))}
+          </div>
         </div>
 
         <div>
@@ -246,8 +314,24 @@ export default function YieldBreakdown({
             step="1"
             value={vacancyPercent}
             onChange={(e) => onParamChange('vacancyPercent', Number(e.target.value))}
-            className="w-full mt-2"
+            className="w-full mt-1 mb-1.5"
           />
+          <div className="flex gap-1">
+            {[0, 3, 5, 8].map((vac) => (
+              <button
+                key={vac}
+                type="button"
+                onClick={() => onParamChange('vacancyPercent', vac)}
+                className={`flex-1 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                  vacancyPercent === vac
+                    ? 'border-cyan-500 text-cyan-300 bg-cyan-500/10'
+                    : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
+                }`}
+              >
+                {vac}%
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

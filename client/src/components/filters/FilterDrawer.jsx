@@ -190,20 +190,45 @@ export default function FilterDrawer({
                 <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Price Range (USD):</span>
               </span>
+              {(filters.minPrice || filters.maxPrice) && (
+                <button
+                  type="button"
+                  onClick={() => onFilterChange({ minPrice: '', maxPrice: '' })}
+                  className="text-[10px] text-slate-400 hover:text-emerald-400 underline cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
             </label>
 
             {/* Quick Price Presets */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-2">
-              {PRICE_PRESETS.map((preset, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => onFilterChange({ minPrice: preset.min, maxPrice: preset.max })}
-                  className="py-1 px-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-[11px] text-slate-300 transition-colors"
-                >
-                  {preset.label}
-                </button>
-              ))}
+              {PRICE_PRESETS.map((preset, idx) => {
+                const isSelected =
+                  String(filters.minPrice || '') === String(preset.min) &&
+                  String(filters.maxPrice || '') === String(preset.max);
+
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      if (isSelected) {
+                        onFilterChange({ minPrice: '', maxPrice: '' });
+                      } else {
+                        onFilterChange({ minPrice: preset.min, maxPrice: preset.max });
+                      }
+                    }}
+                    className={`py-1 px-2 rounded-lg border text-[11px] font-medium transition-all touch-active ${
+                      isSelected
+                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold shadow-[0_0_8px_rgba(16,185,129,0.2)]'
+                        : 'bg-white/5 hover:bg-white/10 border-white/5 text-slate-300'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
