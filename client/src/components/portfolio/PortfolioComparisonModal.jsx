@@ -1,6 +1,6 @@
 // components/portfolio/PortfolioComparisonModal.jsx
-import React from 'react';
-import { X, Download, BookmarkCheck, ArrowRight, DollarSign, Layers } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Download, BookmarkCheck, ArrowRight, DollarSign, Layers, Table, Grid } from 'lucide-react';
 
 export default function PortfolioComparisonModal({
   isOpen,
@@ -8,6 +8,8 @@ export default function PortfolioComparisonModal({
   comparisons = [],
   onSelectProperty
 }) {
+  const [mobileView, setMobileView] = useState('CARDS'); // 'TABLE' | 'CARDS' for mobile
+
   if (!isOpen) return null;
 
   const handleExportCSV = () => {
@@ -57,30 +59,48 @@ export default function PortfolioComparisonModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-panel w-full max-w-5xl max-h-[90vh] flex flex-col bg-slate-950/95 border border-white/20 shadow-2xl overflow-hidden rounded-2xl">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+      <div className="glass-panel w-full max-w-5xl h-[92vh] sm:h-auto sm:max-h-[90vh] flex flex-col bg-slate-950/95 border border-white/20 shadow-2xl overflow-hidden rounded-2xl">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-slate-900/50">
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 bg-slate-900/60">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-              <Layers className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+              <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Side-by-Side Financial Comparison</h2>
-              <p className="text-xs text-slate-400">
-                Comparative analysis across {comparisons.length} portfolio properties
+              <h2 className="text-base sm:text-lg font-bold text-white">Side-by-Side Comparison</h2>
+              <p className="text-[11px] text-slate-400">
+                Comparing {comparisons.length} portfolio listings
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* View Mode Toggle for Small Screens */}
+            <div className="flex sm:hidden bg-slate-900 p-0.5 rounded-lg border border-white/10 text-xs">
+              <button
+                onClick={() => setMobileView('CARDS')}
+                className={`p-1 rounded ${mobileView === 'CARDS' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}
+                title="Card View"
+              >
+                <Grid className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setMobileView('TABLE')}
+                className={`p-1 rounded ${mobileView === 'TABLE' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}
+                title="Table View"
+              >
+                <Table className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             <button
               onClick={handleExportCSV}
-              className="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
+              className="btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
               title="Export as CSV"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Export CSV</span>
+              <span className="hidden sm:inline">Export CSV</span>
             </button>
             <button
               onClick={onClose}
@@ -91,120 +111,175 @@ export default function PortfolioComparisonModal({
           </div>
         </div>
 
-        {/* Comparison Matrix Table */}
-        <div className="flex-1 overflow-auto p-5">
+        {/* Comparison Content */}
+        <div className="flex-1 overflow-auto p-3 sm:p-5">
           {comparisons.length === 0 ? (
-            <div className="text-center py-12 text-slate-400 text-sm">
+            <div className="text-center py-16 text-slate-400 text-sm">
               No properties selected for comparison. Bookmark properties from the map to compare.
             </div>
           ) : (
-            <div className="min-w-[650px] overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="py-3 px-4 font-semibold text-slate-400 w-1/4">Metric</th>
-                    {comparisons.map((item) => (
-                      <th key={item.id} className="py-3 px-4 font-bold text-white">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-sm font-bold text-emerald-400">{item.title}</span>
-                          <span className="text-[11px] text-slate-400 font-normal">{item.street_address}</span>
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Listing Price</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-bold text-emerald-300 text-sm">
-                        ${c.priceUsd.toLocaleString()}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Property Type</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4">
-                        <span className="badge-tag badge-cyan">{c.property_type.replace('_', ' ')}</span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Beds / Baths</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono text-slate-200">
-                        {c.bedrooms} Beds • {c.bathrooms} Baths
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Living Area & $/SqFt</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono text-slate-200">
-                        {c.square_feet.toLocaleString()} sqft (${c.pricePerSqFtUsd}/sqft)
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5 bg-slate-900/30">
-                    <td className="py-3 px-4 font-medium text-slate-300">Est. Monthly Payment (PITI)</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-extrabold text-white text-sm">
-                        ${Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Gross Rental Yield</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-bold text-cyan-400">
-                        {c.grossYieldPercent}%
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Net Cap Rate</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-bold text-emerald-400">
-                        {c.capRatePercent}%
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Cash-on-Cash Return</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-bold text-indigo-400">
-                        {c.cashOnCashReturnPercent}%
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="hover:bg-white/5">
-                    <td className="py-3 px-4 font-medium text-slate-400">Monthly Net Cash Flow</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-3 px-4 font-mono font-bold text-emerald-400">
-                        ${Math.round(c.monthlyCashFlowUsd).toLocaleString()}/mo
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-4 font-medium text-slate-400">Inspect Property</td>
-                    {comparisons.map((c) => (
-                      <td key={c.id} className="py-4 px-4">
-                        <button
-                          onClick={() => {
-                            onSelectProperty(c);
-                            onClose();
-                          }}
-                          className="btn-primary text-xs py-1.5 px-3"
-                        >
-                          View Analytics
-                        </button>
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <>
+              {/* Mobile Card Carousel View (Default on Small Screens) */}
+              <div className={`sm:hidden flex flex-col gap-4 ${mobileView === 'TABLE' ? 'hidden' : 'block'}`}>
+                {comparisons.map((c) => (
+                  <div key={c.id} className="glass-panel p-4 flex flex-col gap-3 border border-white/10">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="badge-tag badge-cyan text-[10px] mb-1">
+                          {c.property_type.replace('_', ' ')}
+                        </span>
+                        <h4 className="text-sm font-bold text-white">{c.title}</h4>
+                        <p className="text-xs text-slate-400">{c.street_address}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-base font-extrabold text-emerald-400 font-mono">
+                          ${c.priceUsd.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">${c.pricePerSqFtUsd}/sqft</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs bg-slate-900/60 p-2.5 rounded-xl border border-white/5 font-mono">
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-sans">Monthly PITI</span>
+                        <span className="text-white font-bold">${Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-sans">Gross Yield</span>
+                        <span className="text-cyan-400 font-bold">{c.grossYieldPercent}%</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-sans">Net Cap Rate</span>
+                        <span className="text-emerald-400 font-bold">{c.capRatePercent}%</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-sans">Cash-on-Cash</span>
+                        <span className="text-indigo-400 font-bold">{c.cashOnCashReturnPercent}%</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        onSelectProperty(c);
+                        onClose();
+                      }}
+                      className="btn-primary text-xs py-2 w-full mt-1"
+                    >
+                      Inspect Financial Model
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Table View (Default on Desktop, Optional on Mobile) */}
+              <div className={`overflow-x-auto ${mobileView === 'CARDS' ? 'hidden sm:block' : 'block'}`}>
+                <table className="w-full text-left text-xs border-collapse min-w-[620px]">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="py-3 px-3.5 font-semibold text-slate-400 w-1/4">Metric</th>
+                      {comparisons.map((item) => (
+                        <th key={item.id} className="py-3 px-3.5 font-bold text-white">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs sm:text-sm font-bold text-emerald-400 line-clamp-1">{item.title}</span>
+                            <span className="text-[10px] text-slate-400 font-normal line-clamp-1">{item.street_address}</span>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Listing Price</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-emerald-300 text-sm">
+                          ${c.priceUsd.toLocaleString()}
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Property Type</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5">
+                          <span className="badge-tag badge-cyan">{c.property_type.replace('_', ' ')}</span>
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Beds / Baths</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono text-slate-200">
+                          {c.bedrooms} bd • {c.bathrooms} ba
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Living Area & $/SqFt</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono text-slate-200">
+                          {c.square_feet.toLocaleString()} sqft (${c.pricePerSqFtUsd}/sqft)
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5 bg-slate-900/30">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-300">Est. Monthly Payment</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-extrabold text-white text-sm">
+                          ${Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Gross Rental Yield</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-cyan-400">
+                          {c.grossYieldPercent}%
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Net Cap Rate</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
+                          {c.capRatePercent}%
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Cash-on-Cash Return</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-indigo-400">
+                          {c.cashOnCashReturnPercent}%
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-white/5">
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Monthly Net Cash Flow</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
+                          ${Math.round(c.monthlyCashFlowUsd).toLocaleString()}/mo
+                        </td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-3.5 font-medium text-slate-400">Action</td>
+                      {comparisons.map((c) => (
+                        <td key={c.id} className="py-3 px-3.5">
+                          <button
+                            onClick={() => {
+                              onSelectProperty(c);
+                              onClose();
+                            }}
+                            className="btn-primary text-xs py-1.5 px-3"
+                          >
+                            Select
+                          </button>
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       </div>
