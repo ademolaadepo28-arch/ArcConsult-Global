@@ -1,7 +1,6 @@
 // components/map/MapCluster.jsx
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
-import 'leaflet.markercluster';
 
 export default function MapCluster({
   map,
@@ -14,44 +13,58 @@ export default function MapCluster({
   const clusterGroupRef = useRef(null);
   const schoolsGroupRef = useRef(null);
 
+  const Leaflet = (typeof window !== 'undefined' && window.L && typeof window.L.markerClusterGroup === 'function')
+    ? window.L
+    : L;
+
   // Initialize marker cluster group
   useEffect(() => {
     if (!map) return;
 
     if (!clusterGroupRef.current) {
-      clusterGroupRef.current = L.markerClusterGroup({
-        maxClusterRadius: 45,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        iconCreateFunction: (cluster) => {
-          const count = cluster.getChildCount();
-          return L.divIcon({
-            html: `<div style="
-              width: 36px;
-              height: 36px;
-              background: rgba(16, 185, 129, 0.9);
-              color: #042f2e;
-              font-weight: 800;
-              font-family: Outfit, sans-serif;
-              font-size: 13px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              border-radius: 50%;
-              border: 2px solid #ffffff;
-              box-shadow: 0 0 16px rgba(16, 185, 129, 0.7);
-            ">${count}</div>`,
-            className: 'custom-cluster-icon',
-            iconSize: L.point(36, 36)
-          });
-        }
-      });
+      if (typeof Leaflet.markerClusterGroup === 'function') {
+        clusterGroupRef.current = Leaflet.markerClusterGroup({
+          maxClusterRadius: 45,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          iconCreateFunction: (cluster) => {
+            const count = cluster.getChildCount();
+            return Leaflet.divIcon({
+              html: `<div style="
+                width: 36px;
+                height: 36px;
+                background: rgba(16, 185, 129, 0.9);
+                color: #042f2e;
+                font-weight: 800;
+                font-family: Outfit, sans-serif;
+                font-size: 13px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                box-shadow: 0 0 16px rgba(16, 185, 129, 0.7);
+              ">${count}</div>`,
+              className: 'custom-cluster-icon',
+              iconSize: Leaflet.point(36, 36)
+            });
+          }
+        });
+      } else {
+        clusterGroupRef.current = Leaflet.layerGroup();
+      }
+    }
+
+    if (!map.hasLayer(clusterGroupRef.current)) {
       map.addLayer(clusterGroupRef.current);
     }
 
     if (!schoolsGroupRef.current) {
-      schoolsGroupRef.current = L.layerGroup();
+      schoolsGroupRef.current = Leaflet.layerGroup();
+    }
+
+    if (!map.hasLayer(schoolsGroupRef.current)) {
       map.addLayer(schoolsGroupRef.current);
     }
 
@@ -67,40 +80,44 @@ export default function MapCluster({
 
   // Update property markers
   useEffect(() => {
-    if (!clusterGroupRef.current) return;
-    clusterGroupRef.current.clearLayers();
+    try {
+      if (!clusterGroupRef.current) return;
+      clusterGroupRef.current.clearLayers();
 
-    properties.forEach((prop) => {
-      if (!prop.lat || !prop.lng) return;
+      properties.forEach((prop) => {
+        if (!prop.lat || !prop.lng) return;
 
-      const isSelected = selectedPropertyId === prop.id;
-      const formattedPrice = `$${(prop.price_cents / 10000000).toFixed(2)}M`.replace('.00M', 'M');
-      const shortPrice = prop.price_cents < 100000000
-        ? `$${Math.round(prop.price_cents / 100000)}k`
-        : formattedPrice;
+        const isSelected = selectedPropertyId === prop.id;
+        const formattedPrice = `$${(prop.price_cents / 10000000).toFixed(2)}M`.replace('.00M', 'M');
+        const shortPrice = prop.price_cents < 100000000
+          ? `$${Math.round(prop.price_cents / 100000)}k`
+          : formattedPrice;
 
-      const markerHtml = `
-        <div class="custom-price-pin ${isSelected ? 'selected' : ''}">
-          <span>${shortPrice}</span>
-        </div>
-      `;
+        const markerHtml = `
+          <div class="custom-price-pin ${isSelected ? 'selected' : ''}">
+            <span>${shortPrice}</span>
+          </div>
+        `;
 
-      const customIcon = L.divIcon({
-        className: 'price-pin-wrapper',
-        html: markerHtml,
-        iconSize: [60, 26],
-        iconAnchor: [30, 13]
+        const customIcon = Leaflet.divIcon({
+          className: 'price-pin-wrapper',
+          html: markerHtml,
+          iconSize: [60, 26],
+          iconAnchor: [30, 13]
+        });
+
+        const marker = Leaflet.marker([prop.lat, prop.lng], { icon: customIcon });
+
+        marker.on('click', () => {
+          onSelectProperty(prop);
+        });
+
+        clusterGroupRef.current.addLayer(marker);
       });
-
-      const marker = L.marker([prop.lat, prop.lng], { icon: customIcon });
-
-      marker.on('click', () => {
-        onSelectProperty(prop);
-      });
-
-      clusterGroupRef.current.addLayer(marker);
-    });
-  }, [properties, selectedPropertyId, onSelectProperty]);
+    } catch (err) {
+      console.error('[MapCluster properties error]:', err);
+    }
+  }, [properties, selectedPropertyId, onSelectProperty, Leaflet]);
 
   // Update schools overlay markers
   useEffect(() => {
@@ -118,14 +135,14 @@ export default function MapCluster({
         </div>
       `;
 
-      const schoolIcon = L.divIcon({
+      const schoolIcon = Leaflet.divIcon({
         className: 'school-pin-wrapper',
         html: schoolHtml,
         iconSize: [75, 22],
         iconAnchor: [37, 11]
       });
 
-      const marker = L.marker([school.lat, school.lng], { icon: schoolIcon });
+      const marker = Leaflet.marker([school.lat, school.lng], { icon: schoolIcon });
       marker.bindPopup(`
         <div style="font-family: Inter, sans-serif; padding: 4px; color: #0f172a;">
           <strong style="color: #4338ca;">${school.name}</strong><br/>

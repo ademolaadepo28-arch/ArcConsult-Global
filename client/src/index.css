@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Design Tokens & Theme Variables */
 :root {
   --bg-primary: #07090e;

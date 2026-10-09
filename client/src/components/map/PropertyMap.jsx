@@ -16,32 +16,35 @@ export default function PropertyMap({
   executionTimeMs = 0,
   engineInfo = ''
 }) {
+  const Leaflet = (typeof window !== 'undefined' && window.L) ? window.L : L;
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const [mapInstance, setMapInstance] = useState(null);
   const radiusCircleRef = useRef(null);
-  const [mapReady, setMapReady] = useState(false);
   const [showSchools, setShowSchools] = useState(true);
 
   // Initialize Leaflet Map
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    const map = L.map(mapContainerRef.current, {
+    const map = Leaflet.map(mapContainerRef.current, {
       center: [centerCoords.lat, centerCoords.lng],
       zoom: 13,
       zoomControl: false
     });
 
-    // Dark Matter CartoDB Basemap
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      subdomains: 'abcd',
+    // OpenStreetMap Basemap styled with sleek dark filter in index.css
+    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
 
+    mapInstanceRef.current = map;
+    setMapInstance(map);
+
     // Initial bounding box notify
     map.whenReady(() => {
-      setMapReady(true);
+      map.invalidateSize();
       if (onBoundsChange) {
         onBoundsChange(map.getBounds());
       }
@@ -54,11 +57,21 @@ export default function PropertyMap({
       }
     });
 
-    mapInstanceRef.current = map;
+    // Handle container resizing (e.g. responsive breakpoints, drawer toggling)
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    });
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
 
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
+      setMapInstance(null);
     };
   }, []);
 
@@ -69,7 +82,7 @@ export default function PropertyMap({
 
     if (searchMode === 'RADIUS') {
       if (!radiusCircleRef.current) {
-        radiusCircleRef.current = L.circle([centerCoords.lat, centerCoords.lng], {
+        radiusCircleRef.current = Leaflet.circle([centerCoords.lat, centerCoords.lng], {
           radius: radiusMeters,
           color: '#10b981',
           fillColor: '#10b981',
@@ -114,9 +127,9 @@ export default function PropertyMap({
       <div ref={mapContainerRef} className="w-full h-full" />
 
       {/* Embedded Cluster Layer */}
-      {mapReady && mapInstanceRef.current && (
+      {mapInstance && (
         <MapCluster
-          map={mapInstanceRef.current}
+          map={mapInstance}
           properties={properties}
           selectedPropertyId={selectedProperty?.id}
           onSelectProperty={onSelectProperty}
