@@ -268,6 +268,25 @@ input[type="range"]::-webkit-slider-thumb:hover {
   white-space: nowrap;
 }
 
+/* Custom Property Map Popup */
+.custom-property-map-popup .leaflet-popup-content-wrapper {
+  background: rgba(13, 18, 29, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(16px) !important;
+  box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.75) !important;
+  padding: 4px !important;
+}
+
+.custom-property-map-popup .leaflet-popup-tip {
+  background: rgba(13, 18, 29, 0.95) !important;
+}
+
+.custom-property-map-popup .leaflet-popup-content {
+  margin: 4px !important;
+  line-height: 1.3 !important;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

@@ -35,7 +35,9 @@ const fallbackProperties = [
     zip_code: '78704',
     lng: -97.7694,
     lat: 30.2543,
-    estimated_monthly_rent_cents: 520000
+    estimated_monthly_rent_cents: 520000,
+    image_url: '/images/properties/prop-1-main.jpg',
+    alt_image_url: '/images/properties/prop-1-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000002',
@@ -56,7 +58,9 @@ const fallbackProperties = [
     zip_code: '78701',
     lng: -97.7505,
     lat: 30.2678,
-    estimated_monthly_rent_cents: 430000
+    estimated_monthly_rent_cents: 430000,
+    image_url: '/images/properties/prop-2-main.jpg',
+    alt_image_url: '/images/properties/prop-2-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000003',
@@ -77,7 +81,9 @@ const fallbackProperties = [
     zip_code: '78704',
     lng: -97.7554,
     lat: 30.2562,
-    estimated_monthly_rent_cents: 480000
+    estimated_monthly_rent_cents: 480000,
+    image_url: '/images/properties/prop-3-main.jpg',
+    alt_image_url: '/images/properties/prop-3-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000004',
@@ -98,7 +104,9 @@ const fallbackProperties = [
     zip_code: '78704',
     lng: -97.7479,
     lat: 30.2486,
-    estimated_monthly_rent_cents: 950000
+    estimated_monthly_rent_cents: 950000,
+    image_url: '/images/properties/prop-4-main.jpg',
+    alt_image_url: '/images/properties/prop-4-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000005',
@@ -119,7 +127,9 @@ const fallbackProperties = [
     zip_code: '78703',
     lng: -97.7601,
     lat: 30.2789,
-    estimated_monthly_rent_cents: 640000
+    estimated_monthly_rent_cents: 640000,
+    image_url: '/images/properties/prop-5-main.jpg',
+    alt_image_url: '/images/properties/prop-5-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000006',
@@ -140,7 +150,9 @@ const fallbackProperties = [
     zip_code: '78701',
     lng: -97.7512,
     lat: 30.2662,
-    estimated_monthly_rent_cents: 340000
+    estimated_monthly_rent_cents: 340000,
+    image_url: '/images/properties/prop-6-main.jpg',
+    alt_image_url: '/images/properties/prop-6-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000007',
@@ -161,7 +173,9 @@ const fallbackProperties = [
     zip_code: '78704',
     lng: -97.7831,
     lat: 30.2472,
-    estimated_monthly_rent_cents: 580000
+    estimated_monthly_rent_cents: 580000,
+    image_url: '/images/properties/prop-7-main.jpg',
+    alt_image_url: '/images/properties/prop-7-alt.jpg'
   },
   {
     id: 'c0000000-0000-0000-0000-000000000008',
@@ -182,7 +196,9 @@ const fallbackProperties = [
     zip_code: '78723',
     lng: -97.7081,
     lat: 30.2985,
-    estimated_monthly_rent_cents: 380000
+    estimated_monthly_rent_cents: 380000,
+    image_url: '/images/properties/prop-8-main.jpg',
+    alt_image_url: '/images/properties/prop-8-alt.jpg'
   }
 ];
 

@@ -24,7 +24,8 @@ INSERT INTO properties (
   id, title, description, property_type, status,
   price_cents, estimated_hoa_monthly_cents, annual_property_tax_cents,
   bedrooms, bathrooms, square_feet, year_built,
-  street_address, city, state, zip_code, location
+  street_address, city, state, zip_code,
+  image_url, alt_image_url, location
 ) VALUES
 (
   'c0000000-0000-0000-0000-000000000001',
@@ -34,6 +35,7 @@ INSERT INTO properties (
   89500000, 0, 1420000,
   4, 3.5, 3150, 2021,
   '2104 Paramount Ave', 'Austin', 'TX', '78704',
+  '/images/properties/prop-1-main.jpg', '/images/properties/prop-1-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7694, 30.2543), 4326)
 ),
 (
@@ -44,6 +46,7 @@ INSERT INTO properties (
   64500000, 78500, 1150000,
   2, 2.0, 1420, 2019,
   '301 West Ave Unit 3402', 'Austin', 'TX', '78701',
+  '/images/properties/prop-2-main.jpg', '/images/properties/prop-2-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7505, 30.2678), 4326)
 ),
 (
@@ -54,6 +57,7 @@ INSERT INTO properties (
   72500000, 29000, 1260000,
   3, 2.5, 2180, 2022,
   '908 S 3rd St Unit B', 'Austin', 'TX', '78704',
+  '/images/properties/prop-3-main.jpg', '/images/properties/prop-3-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7554, 30.2562), 4326)
 ),
 (
@@ -64,6 +68,7 @@ INSERT INTO properties (
   145000000, 0, 2480000,
   8, 6.0, 4800, 1968,
   '1412 Newning Ave', 'Austin', 'TX', '78704',
+  '/images/properties/prop-4-main.jpg', '/images/properties/prop-4-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7479, 30.2486), 4326)
 ),
 (
@@ -74,6 +79,7 @@ INSERT INTO properties (
   112000000, 0, 1950000,
   3, 2.0, 2450, 1928,
   '1608 Waterston Ave', 'Austin', 'TX', '78703',
+  '/images/properties/prop-5-main.jpg', '/images/properties/prop-5-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7601, 30.2789), 4326)
 ),
 (
@@ -84,6 +90,7 @@ INSERT INTO properties (
   53500000, 62000, 940000,
   1, 1.5, 980, 2016,
   '222 West Ave Unit 1205', 'Austin', 'TX', '78701',
+  '/images/properties/prop-6-main.jpg', '/images/properties/prop-6-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7512, 30.2662), 4326)
 ),
 (
@@ -94,6 +101,7 @@ INSERT INTO properties (
   98000000, 0, 1680000,
   4, 3.0, 3300, 1974,
   '2610 Barton Hills Dr', 'Austin', 'TX', '78704',
+  '/images/properties/prop-7-main.jpg', '/images/properties/prop-7-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7831, 30.2472), 4326)
 ),
 (
@@ -104,6 +112,7 @@ INSERT INTO properties (
   59900000, 22000, 1020000,
   3, 2.5, 1950, 2020,
   '4112 Simond Ave', 'Austin', 'TX', '78723',
+  '/images/properties/prop-8-main.jpg', '/images/properties/prop-8-alt.jpg',
   ST_SetSRID(ST_MakePoint(-97.7081, 30.2985), 4326)
 );
 

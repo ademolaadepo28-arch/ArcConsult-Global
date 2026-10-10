@@ -83,6 +83,7 @@ async function getPropertyById(req, res) {
         SELECT id, title, description, property_type, status, price_cents,
           estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
           bathrooms, square_feet, year_built, street_address, city, state, zip_code,
+          image_url, alt_image_url,
           ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat
         FROM properties WHERE id = $1
       `;

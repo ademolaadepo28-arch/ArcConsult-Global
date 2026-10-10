@@ -37,6 +37,7 @@ async function searchByBoundingBox(minLng, minLat, maxLng, maxLat, filters = {})
       SELECT id, title, description, property_type, status, price_cents,
         estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
         bathrooms, square_feet, year_built, street_address, city, state, zip_code,
+        image_url, alt_image_url,
         ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat
       FROM properties
       WHERE location && ST_MakeEnvelope($1, $2, $3, $4, 4326)
@@ -97,6 +98,7 @@ async function searchByRadius(centerLng, centerLat, radiusMeters = 5000, filters
       SELECT id, title, description, property_type, status, price_cents,
         estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
         bathrooms, square_feet, year_built, street_address, city, state, zip_code,
+        image_url, alt_image_url,
         ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat,
         ROUND(ST_Distance(location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography)) AS distance_meters
       FROM properties
@@ -211,6 +213,9 @@ function toGeoJSON(propertiesList) {
         city: p.city,
         state: p.state,
         zip_code: p.zip_code,
+        image_url: p.image_url || null,
+        alt_image_url: p.alt_image_url || null,
+        description: p.description || null,
         distance_meters: p.distance_meters || null,
         annual_property_tax_cents: p.annual_property_tax_cents,
         estimated_hoa_monthly_cents: p.estimated_hoa_monthly_cents,

@@ -32,7 +32,11 @@ import {
   Copy,
   Check,
   RefreshCw,
-  Share2
+  Share2,
+  Camera,
+  Image,
+  ChevronLeft,
+  X
 } from 'lucide-react';
 
 export default function App() {
@@ -72,6 +76,10 @@ export default function App() {
 
   // Responsive Mobile/Tablet Navigation Tab: 'MAP' | 'ANALYTICS' | 'SAVED'
   const [mobileViewTab, setMobileViewTab] = useState('MAP');
+
+  // Photo viewer & Lightbox modal states
+  const [selectedPhotoTab, setSelectedPhotoTab] = useState('MAIN'); // 'MAIN' | 'ALT'
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Amortization simulation state
   const [downPaymentPercent, setDownPaymentPercent] = useState(20);
@@ -124,6 +132,7 @@ export default function App() {
   // Load single property details + spatial join schools when selected
   const handleSelectProperty = async (prop, shouldSwitchMobileView = false) => {
     setSelectedProperty(prop);
+    setSelectedPhotoTab('MAIN');
     if (shouldSwitchMobileView && window.innerWidth < 1024) {
       setMobileViewTab('ANALYTICS');
     }
@@ -378,7 +387,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[380px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[460px] overflow-y-auto pr-1">
               {sortedProperties.map((prop) => {
                 const isSelected = selectedProperty?.id === prop.id;
                 const bookmarked = isBookmarked(prop.id);
@@ -387,48 +396,75 @@ export default function App() {
                   <div
                     key={prop.id}
                     onClick={() => handleSelectProperty(prop, true)}
-                    className={`glass-card-interactive p-3.5 sm:p-4 flex flex-col justify-between gap-3 touch-active ${
+                    className={`glass-card-interactive p-3 flex flex-col justify-between gap-2.5 touch-active group ${
                       isSelected ? 'glass-card-selected' : ''
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="badge-tag badge-cyan mb-1 text-[10px]">
+                    {/* Realistic Property Image Thumbnail */}
+                    <div className="relative h-28 w-full rounded-xl overflow-hidden bg-slate-900">
+                      <img
+                        src={prop.image_url || '/images/properties/prop-1-main.jpg'}
+                        alt={prop.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/images/properties/prop-1-main.jpg';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#090d15] via-transparent to-black/30 pointer-events-none" />
+
+                      {/* Property Type Badge Overlay */}
+                      <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                        <span className="badge-tag badge-cyan text-[9px] py-0.5 px-2 bg-slate-950/80 backdrop-blur-md">
                           {prop.property_type.replace('_', ' ')}
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-1">
-                          {prop.title}
-                        </h4>
-                        <p className="text-[11px] text-slate-400 line-clamp-1">{prop.street_address}</p>
                       </div>
 
+                      {/* Bookmark Button Overlay */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleBookmark(prop.id);
                         }}
-                        className={`p-1.5 rounded-lg border transition-all touch-active ${
+                        className={`absolute top-2 right-2 p-1.5 rounded-lg border backdrop-blur-md transition-all touch-active ${
                           bookmarked
-                            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
-                            : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                            ? 'bg-emerald-500/30 border-emerald-500 text-emerald-400'
+                            : 'bg-slate-950/70 border-white/20 text-slate-300 hover:text-white'
                         }`}
                         title={bookmarked ? 'Remove from Saved Portfolio' : 'Bookmark to Portfolio'}
                       >
-                        {bookmarked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                        {bookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
                       </button>
+
+                      {/* Floating Price on Image */}
+                      <div className="absolute bottom-1.5 left-2">
+                        <span className="font-extrabold text-emerald-400 font-mono text-sm drop-shadow-md">
+                          ${(prop.price_cents / 100).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                      <div className="text-base sm:text-lg font-extrabold text-emerald-400 font-mono">
-                        ${(prop.price_cents / 100).toLocaleString()}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                    {/* Listing Title & Address */}
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-1 group-hover:text-emerald-300 transition-colors">
+                        {prop.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 line-clamp-1">{prop.street_address}</p>
+                    </div>
+
+                    {/* Key Metrics */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[11px] text-slate-400">
+                      <div className="flex items-center gap-1.5">
                         <span>{prop.bedrooms} bd</span>
                         <span>•</span>
                         <span>{prop.bathrooms} ba</span>
                         <span>•</span>
                         <span>{prop.square_feet} sqft</span>
                       </div>
+                      <span className="text-[10px] text-emerald-400 font-mono font-semibold">
+                        Austin, TX
+                      </span>
                     </div>
                   </div>
                 );
@@ -489,6 +525,80 @@ export default function App() {
                       </>
                     )}
                   </button>
+                </div>
+
+                {/* Interactive Realistic Photo Showcase */}
+                <div className="relative w-full h-48 sm:h-56 rounded-xl overflow-hidden bg-slate-900 border border-white/10 group shadow-lg">
+                  <img
+                    src={
+                      selectedPhotoTab === 'MAIN'
+                        ? (selectedProperty.image_url || '/images/properties/prop-1-main.jpg')
+                        : (selectedProperty.alt_image_url || selectedProperty.image_url || '/images/properties/prop-1-alt.jpg')
+                    }
+                    alt={selectedProperty.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
+                    onClick={() => setIsLightboxOpen(true)}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/images/properties/prop-1-main.jpg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#090d15] via-transparent to-black/30 pointer-events-none" />
+
+                  {/* Top-right Lightbox Expand Button */}
+                  <button
+                    type="button"
+                    onClick={() => setIsLightboxOpen(true)}
+                    className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-950/70 hover:bg-slate-900 border border-white/20 text-white backdrop-blur-md transition-all touch-active"
+                    title="Expand full photo (HD Lightbox)"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                  </button>
+
+                  {/* Bottom Bar: Photo Switcher Controls */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between">
+                    <div className="flex items-center gap-1 bg-slate-950/80 p-0.5 rounded-xl border border-white/15 backdrop-blur-md text-[11px]">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPhotoTab('MAIN');
+                        }}
+                        className={`px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1.5 transition-all touch-active ${
+                          selectedPhotoTab === 'MAIN'
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-300 hover:text-white'
+                        }`}
+                      >
+                        <Camera className="w-3 h-3" />
+                        <span>Exterior</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPhotoTab('ALT');
+                        }}
+                        className={`px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1.5 transition-all touch-active ${
+                          selectedPhotoTab === 'ALT'
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-300 hover:text-white'
+                        }`}
+                      >
+                        <Image className="w-3 h-3" />
+                        <span>Interior / View</span>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsLightboxOpen(true)}
+                      className="hidden sm:flex items-center gap-1 text-[11px] font-medium text-slate-300 hover:text-white bg-slate-950/80 px-2 py-1 rounded-xl border border-white/10 backdrop-blur-md transition-colors"
+                    >
+                      <Maximize2 className="w-3 h-3 text-emerald-400" />
+                      <span>HD View</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Interactive Action Bar: Map Center, Directions Link, Share/Copy */}
@@ -737,6 +847,113 @@ export default function App() {
         totalProperties={properties.length}
         totalSchools={allSchools.length}
       />
+
+      {/* Full-Resolution HD Photo Lightbox Modal */}
+      {isLightboxOpen && selectedProperty && (
+        <div
+          className="fixed inset-0 z-[2200] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-lg animate-fadeIn"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <div
+            className="relative max-w-5xl w-full flex flex-col bg-slate-950/95 border border-white/20 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Lightbox Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-900/60">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                  <Camera className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white leading-tight">
+                    {selectedProperty.title}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {selectedPhotoTab === 'MAIN' ? 'Primary Exterior View' : 'Interior Architecture & Layout'} • {selectedProperty.street_address}, {selectedProperty.city}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Switch tab directly inside lightbox */}
+                <div className="bg-slate-900 p-0.5 rounded-lg border border-white/10 text-xs flex">
+                  <button
+                    onClick={() => setSelectedPhotoTab('MAIN')}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition-colors ${
+                      selectedPhotoTab === 'MAIN'
+                        ? 'bg-emerald-500 text-slate-950'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Exterior
+                  </button>
+                  <button
+                    onClick={() => setSelectedPhotoTab('ALT')}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition-colors ${
+                      selectedPhotoTab === 'ALT'
+                        ? 'bg-emerald-500 text-slate-950'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Interior
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setIsLightboxOpen(false)}
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title="Close Lightbox"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Lightbox Image Container */}
+            <div className="relative w-full h-[55vh] sm:h-[65vh] bg-black flex items-center justify-center overflow-hidden select-none">
+              <img
+                src={
+                  selectedPhotoTab === 'MAIN'
+                    ? (selectedProperty.image_url || '/images/properties/prop-1-main.jpg')
+                    : (selectedProperty.alt_image_url || selectedProperty.image_url || '/images/properties/prop-1-alt.jpg')
+                }
+                alt={selectedProperty.title}
+                className="w-full h-full object-contain"
+              />
+
+              {/* Previous / Next Arrow toggles */}
+              <button
+                onClick={() => setSelectedPhotoTab((prev) => (prev === 'MAIN' ? 'ALT' : 'MAIN'))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-950/70 hover:bg-slate-900 border border-white/20 text-white backdrop-blur-md transition-all touch-active cursor-pointer"
+                title="Toggle Photo"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setSelectedPhotoTab((prev) => (prev === 'MAIN' ? 'ALT' : 'MAIN'))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-950/70 hover:bg-slate-900 border border-white/20 text-white backdrop-blur-md transition-all touch-active cursor-pointer"
+                title="Toggle Photo"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Lightbox Footer */}
+            <div className="flex items-center justify-between p-3.5 bg-slate-900/60 border-t border-white/10 text-xs text-slate-300">
+              <span className="font-mono text-emerald-400 font-bold text-sm">
+                ${(selectedProperty.price_cents / 100).toLocaleString()}
+              </span>
+              <div className="flex items-center gap-3 text-slate-400">
+                <span>{selectedProperty.bedrooms} Beds</span>
+                <span>•</span>
+                <span>{selectedProperty.bathrooms} Baths</span>
+                <span>•</span>
+                <span>{selectedProperty.square_feet} SqFt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

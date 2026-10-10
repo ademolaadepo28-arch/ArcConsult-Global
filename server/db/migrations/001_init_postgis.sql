@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS properties (
   city VARCHAR(100) NOT NULL,
   state VARCHAR(2) NOT NULL,
   zip_code VARCHAR(10) NOT NULL,
+  image_url VARCHAR(500),
+  alt_image_url VARCHAR(500),
   location GEOMETRY(Point, 4326) NOT NULL, -- WGS 84 Coordinates
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

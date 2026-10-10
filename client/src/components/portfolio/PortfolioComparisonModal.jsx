@@ -122,20 +122,38 @@ export default function PortfolioComparisonModal({
               {/* Mobile Card Carousel View (Default on Small Screens) */}
               <div className={`sm:hidden flex flex-col gap-4 ${mobileView === 'TABLE' ? 'hidden' : 'block'}`}>
                 {comparisons.map((c) => (
-                  <div key={c.id} className="glass-panel p-4 flex flex-col gap-3 border border-white/10">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="badge-tag badge-cyan text-[10px] mb-1">
+                  <div key={c.id} className="glass-panel p-3.5 flex flex-col gap-2.5 border border-white/10">
+                    {/* Property Thumbnail */}
+                    <div className="relative h-28 w-full rounded-xl overflow-hidden bg-slate-900">
+                      <img
+                        src={c.image_url || '/images/properties/prop-1-main.jpg'}
+                        alt={c.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/images/properties/prop-1-main.jpg';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
+                      <div className="absolute top-2 left-2">
+                        <span className="badge-tag badge-cyan text-[9px] bg-slate-950/80 backdrop-blur-md">
                           {c.property_type.replace('_', ' ')}
                         </span>
-                        <h4 className="text-sm font-bold text-white">{c.title}</h4>
-                        <p className="text-xs text-slate-400">{c.street_address}</p>
                       </div>
-                      <div className="text-right">
-                        <span className="text-base font-extrabold text-emerald-400 font-mono">
+                      <div className="absolute bottom-2 left-2">
+                        <span className="text-sm font-extrabold text-emerald-400 font-mono">
                           ${c.priceUsd.toLocaleString()}
                         </span>
-                        <span className="text-[10px] text-slate-500 block">${c.pricePerSqFtUsd}/sqft</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="text-xs sm:text-sm font-bold text-white">{c.title}</h4>
+                        <p className="text-[11px] text-slate-400">{c.street_address}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-slate-400 block">${c.pricePerSqFtUsd}/sqft</span>
                       </div>
                     </div>
 
@@ -179,9 +197,22 @@ export default function PortfolioComparisonModal({
                       <th className="py-3 px-3.5 font-semibold text-slate-400 w-1/4">Metric</th>
                       {comparisons.map((item) => (
                         <th key={item.id} className="py-3 px-3.5 font-bold text-white">
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-xs sm:text-sm font-bold text-emerald-400 line-clamp-1">{item.title}</span>
-                            <span className="text-[10px] text-slate-400 font-normal line-clamp-1">{item.street_address}</span>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-12 h-10 rounded-lg overflow-hidden bg-slate-900 border border-white/10 shrink-0">
+                              <img
+                                src={item.image_url || '/images/properties/prop-1-main.jpg'}
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = '/images/properties/prop-1-main.jpg';
+                                }}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-xs sm:text-sm font-bold text-emerald-400 line-clamp-1">{item.title}</span>
+                              <span className="text-[10px] text-slate-400 font-normal line-clamp-1">{item.street_address}</span>
+                            </div>
                           </div>
                         </th>
                       ))}

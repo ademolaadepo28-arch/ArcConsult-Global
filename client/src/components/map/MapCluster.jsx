@@ -108,8 +108,39 @@ export default function MapCluster({
 
         const marker = Leaflet.marker([prop.lat, prop.lng], { icon: customIcon });
 
+        const popupContent = `
+          <div style="font-family: Inter, sans-serif; width: 190px; color: #f1f5f9; padding: 2px;">
+            <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; margin-bottom: 6px; background: #0f172a;">
+              <img src="${prop.image_url || '/images/properties/prop-1-main.jpg'}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/properties/prop-1-main.jpg'" />
+            </div>
+            <div style="font-weight: 800; font-size: 13px; color: #34d399; font-family: Outfit, sans-serif;">
+              $${(prop.price_cents / 100).toLocaleString()}
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${prop.title}
+            </div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">
+              ${prop.bedrooms} bd • ${prop.bathrooms} ba • ${prop.square_feet} sqft
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent, {
+          closeButton: false,
+          className: 'custom-property-map-popup',
+          offset: [0, -8]
+        });
+
         marker.on('click', () => {
           onSelectProperty(prop);
+        });
+
+        marker.on('mouseover', function () {
+          this.openPopup();
+        });
+
+        marker.on('mouseout', function () {
+          this.closePopup();
         });
 
         clusterGroupRef.current.addLayer(marker);

@@ -190,6 +190,8 @@ async function compareProperties(req, res) {
         title: p.title,
         property_type: p.property_type,
         street_address: p.street_address,
+        image_url: p.image_url || null,
+        alt_image_url: p.alt_image_url || null,
         priceUsd: p.price_cents / 100,
         bedrooms: p.bedrooms,
         bathrooms: p.bathrooms,
