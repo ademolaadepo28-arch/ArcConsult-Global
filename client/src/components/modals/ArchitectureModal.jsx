@@ -49,30 +49,32 @@ export default function ArchitectureModal({
 
   const handleCopyToken = () => {
     if (!demoToken) return;
-    navigator.clipboard.writeText(demoToken);
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(demoToken).catch(() => {});
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-panel w-full max-w-4xl max-h-[90vh] flex flex-col bg-[#090d15]/95 border border-white/20 shadow-2xl rounded-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-0 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn">
+      <div className="glass-panel w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col bg-[#090d15]/95 border-0 sm:border sm:border-white/20 shadow-2xl rounded-none sm:rounded-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 bg-slate-900/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20">
+        <div className="flex items-center justify-between p-3.5 sm:p-5 border-b border-white/10 bg-slate-900/60 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 mr-2">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 shrink-0">
               <div className="w-full h-full bg-[#090d15] rounded-[10px] flex items-center justify-center text-emerald-400">
-                <Cpu className="w-5 h-5" />
+                <Cpu className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold text-white font-heading">
+                <h3 className="text-sm sm:text-lg font-bold text-white font-heading truncate">
                   Architecture Spec #05
                 </h3>
-                <span className="badge-tag badge-emerald text-[10px]">Production Spec</span>
+                <span className="badge-tag badge-emerald text-[9px] sm:text-[10px] shrink-0">Production Spec</span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-[10px] sm:text-xs text-slate-400 truncate">
                 PostGIS Spatial Vector Engine • Lagos & Abuja Metro • 20-Year Integer Precision Amortization
               </p>
             </div>
@@ -80,14 +82,14 @@ export default function ArchitectureModal({
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-white/10 bg-slate-950/80 px-4 pt-2 gap-2 text-xs overflow-x-auto">
+        <div className="flex border-b border-white/10 bg-slate-950/80 px-3 sm:px-4 pt-1.5 gap-1.5 sm:gap-2 text-xs overflow-x-auto touch-scroll no-scrollbar shrink-0">
           {[
             { id: 'SPEC', label: 'Overview & Stack', icon: Layers },
             { id: 'GEOSPATIAL', label: 'PostGIS Spatial Engine', icon: Compass },
@@ -100,13 +102,13 @@ export default function ArchitectureModal({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-3 border-b-2 font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
+                className={`py-2 px-2.5 sm:px-3 border-b-2 font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap text-xs ${
                   isActive
                     ? 'border-emerald-400 text-emerald-300 bg-emerald-500/10'
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5 shrink-0" />
                 <span>{tab.label}</span>
               </button>
             );
@@ -114,7 +116,7 @@ export default function ArchitectureModal({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 text-xs text-slate-300 leading-relaxed">
+        <div className="flex-1 overflow-y-auto touch-scroll p-3.5 sm:p-6 space-y-5 text-xs text-slate-300 leading-relaxed safe-bottom-pad">
           {activeTab === 'SPEC' && (
             <div className="space-y-4">
               {/* Live HUD Cards */}
@@ -254,7 +256,7 @@ ORDER BY distance_meters ASC;`}
           {activeTab === 'AUTH' && (
             <div className="space-y-4">
               <div className="bg-slate-900/60 p-4 rounded-xl border border-white/10 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                   <div>
                     <h4 className="font-bold text-white text-xs flex items-center gap-1.5 text-cyan-400">
                       <ShieldCheck className="w-4 h-4" />
@@ -268,7 +270,7 @@ ORDER BY distance_meters ASC;`}
                   <button
                     onClick={handleGenerateToken}
                     disabled={generating}
-                    className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                    className="btn-primary text-xs py-1.5 px-3 flex items-center justify-center gap-1.5 w-full sm:w-auto"
                   >
                     <Zap className="w-3.5 h-3.5" />
                     <span>{generating ? 'Requesting...' : 'Generate New Token'}</span>
@@ -298,11 +300,11 @@ ORDER BY distance_meters ASC;`}
         </div>
 
         {/* Footer */}
-        <div className="p-3 sm:p-4 border-t border-white/10 bg-slate-950 flex items-center justify-between text-xs">
-          <span className="text-slate-400">ArcConsult Global — Architecture Spec #05</span>
+        <div className="p-3 sm:p-4 border-t border-white/10 bg-slate-950 flex items-center justify-between text-[11px] sm:text-xs shrink-0 safe-bottom-pad">
+          <span className="text-slate-400 truncate mr-2">ArcConsult Global — Spec #05</span>
           <button
             onClick={onClose}
-            className="btn-secondary text-xs py-1.5 px-4"
+            className="btn-secondary text-xs py-1.5 px-4 shrink-0"
           >
             Close
           </button>

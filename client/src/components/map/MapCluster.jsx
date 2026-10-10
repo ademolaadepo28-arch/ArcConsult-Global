@@ -88,7 +88,7 @@ export default function MapCluster({
         if (!prop.lat || !prop.lng) return;
 
         const isSelected = selectedPropertyId === prop.id;
-        const nairaVal = prop.price_cents / 100;
+        const nairaVal = (prop.price_cents || 0) / 100;
         let shortPrice;
         if (nairaVal >= 1000000000) {
           shortPrice = `₦${(nairaVal / 1000000000).toFixed(2).replace(/\.00$/, '')}B`;
@@ -119,13 +119,13 @@ export default function MapCluster({
               <img src="${prop.image_url || '/images/properties/prop-1-main.jpg'}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/properties/prop-1-main.jpg'" />
             </div>
             <div style="font-weight: 800; font-size: 13px; color: #34d399; font-family: Outfit, sans-serif;">
-              ₦${(prop.price_cents / 100).toLocaleString()}
+              ₦${Math.round((prop.price_cents || 0) / 100).toLocaleString()}
             </div>
             <div style="font-size: 11px; font-weight: 700; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${prop.title}
+              ${prop.title || 'Residential Asset'}
             </div>
             <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">
-              ${prop.bedrooms} bd • ${prop.bathrooms} ba • ${prop.square_feet ? prop.square_feet.toLocaleString() : ''} sqft
+              ${prop.bedrooms ?? '—'} bd • ${prop.bathrooms ?? '—'} ba • ${prop.square_feet ? prop.square_feet.toLocaleString() : '—'} sqft
             </div>
           </div>
         `;
@@ -165,9 +165,10 @@ export default function MapCluster({
     schools.forEach((school) => {
       if (!school.lat || !school.lng) return;
 
+      const schoolName = school.name || 'School';
       const schoolHtml = `
         <div class="custom-school-pin">
-          <span>★ ${school.rating} ${school.name.split(' ')[0]}</span>
+          <span>★ ${school.rating || '—'} ${schoolName.split(' ')[0]}</span>
         </div>
       `;
 
@@ -181,9 +182,9 @@ export default function MapCluster({
       const marker = Leaflet.marker([school.lat, school.lng], { icon: schoolIcon });
       marker.bindPopup(`
         <div style="font-family: Inter, sans-serif; padding: 4px; color: #0f172a;">
-          <strong style="color: #4338ca;">${school.name}</strong><br/>
-          <span>Type: ${school.school_type}</span><br/>
-          <span style="font-weight: 700; color: #16a34a;">Rating: ${school.rating} / 10.0</span>
+          <strong style="color: #4338ca;">${schoolName}</strong><br/>
+          <span>Type: ${school.school_type || 'Institution'}</span><br/>
+          <span style="font-weight: 700; color: #16a34a;">Rating: ${school.rating || '—'} / 10.0</span>
         </div>
       `);
       schoolsGroupRef.current.addLayer(marker);

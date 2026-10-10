@@ -148,10 +148,10 @@ export default function YieldBreakdown({
       </div>
 
       {/* Yield Metrics 4-Box Grid (Interactive Clickable Cards) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
         <div
           onClick={() => setViewTab('CASHFLOW')}
-          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none min-w-0 touch-active ${
             viewTab === 'CASHFLOW'
               ? 'bg-slate-900/90 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
               : 'bg-slate-900/60 border-white/5 hover:border-cyan-500/30 hover:bg-slate-900/80'
@@ -159,20 +159,20 @@ export default function YieldBreakdown({
           title="Click to view Revenue Breakdown donut chart"
         >
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block truncate">
               Gross Rental Yield
             </span>
-            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono">Chart ↗</span>
+            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono shrink-0 ml-1">Chart ↗</span>
           </div>
-          <span className="text-lg sm:text-xl font-extrabold text-cyan-400 font-mono">
-            {metrics.grossRentalYieldPercent}%
+          <span className="text-base xs:text-lg sm:text-xl font-extrabold text-cyan-400 font-mono block truncate">
+            {metrics.grossRentalYieldPercent ?? 0}%
           </span>
-          <span className="text-[10px] text-slate-500 block">Annual Rent / Price</span>
+          <span className="text-[10px] text-slate-500 block truncate">Annual Rent / Price</span>
         </div>
 
         <div
           onClick={() => setViewTab('EQUITY')}
-          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer group select-none min-w-0 touch-active ${
             viewTab === 'EQUITY'
               ? 'bg-slate-900/90 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
               : 'bg-slate-900/60 border-white/5 hover:border-emerald-500/30 hover:bg-slate-900/80'
@@ -180,49 +180,49 @@ export default function YieldBreakdown({
           title="Click to view 10-Yr Equity Growth projection"
         >
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block truncate">
               Net Cap Rate
             </span>
-            <span className="text-[9px] text-emerald-400/60 group-hover:text-emerald-300 font-mono">Chart ↗</span>
+            <span className="text-[9px] text-emerald-400/60 group-hover:text-emerald-300 font-mono shrink-0 ml-1">Chart ↗</span>
           </div>
-          <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono">
-            {metrics.capRatePercent}%
+          <span className="text-base xs:text-lg sm:text-xl font-bold text-emerald-400 font-mono block truncate">
+            {metrics.capRatePercent ?? 0}%
           </span>
-          <span className="text-[10px] text-slate-500 block">NOI / Asset Price</span>
+          <span className="text-[10px] text-slate-500 block truncate">NOI / Asset Price</span>
         </div>
 
         <div
           onClick={() => setViewTab('EQUITY')}
-          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group select-none"
+          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group select-none min-w-0 touch-active"
           title="Click to view 10-Yr Equity Growth projection"
         >
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block truncate">
               Cash-on-Cash
             </span>
-            <span className="text-[9px] text-indigo-400/60 group-hover:text-indigo-300 font-mono">Chart ↗</span>
+            <span className="text-[9px] text-indigo-400/60 group-hover:text-indigo-300 font-mono shrink-0 ml-1">Chart ↗</span>
           </div>
-          <span className={`text-lg sm:text-xl font-bold font-mono ${metrics.cashOnCashReturnPercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {metrics.cashOnCashReturnPercent}%
+          <span className={`text-base xs:text-lg sm:text-xl font-bold font-mono block truncate ${(metrics.cashOnCashReturnPercent ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {metrics.cashOnCashReturnPercent ?? 0}%
           </span>
-          <span className="text-[10px] text-slate-500 block">Net Cash / Initial Equity</span>
+          <span className="text-[10px] text-slate-500 block truncate">Net Cash / Initial Equity</span>
         </div>
 
         <div
           onClick={() => setViewTab('CASHFLOW')}
-          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all cursor-pointer group select-none"
+          className="bg-slate-900/60 hover:bg-slate-900/80 p-3 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all cursor-pointer group select-none min-w-0 touch-active"
           title="Click to view Revenue Breakdown donut chart"
         >
           <div className="flex items-center justify-between mb-0.5">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block truncate">
               Net Cash Flow
             </span>
-            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono">Chart ↗</span>
+            <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono shrink-0 ml-1">Chart ↗</span>
           </div>
-          <span className={`text-lg sm:text-xl font-bold font-mono ${metrics.monthlyCashFlowUsd >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {metrics.monthlyCashFlowUsd >= 0 ? `+₦${Math.round(metrics.monthlyCashFlowUsd).toLocaleString()}` : `-₦${Math.round(Math.abs(metrics.monthlyCashFlowUsd)).toLocaleString()}`}
+          <span className={`text-base xs:text-lg sm:text-xl font-bold font-mono block truncate ${(metrics.monthlyCashFlowUsd || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {(metrics.monthlyCashFlowUsd || 0) >= 0 ? `+₦${Math.round(metrics.monthlyCashFlowUsd || 0).toLocaleString()}` : `-₦${Math.round(Math.abs(metrics.monthlyCashFlowUsd || 0)).toLocaleString()}`}
           </span>
-          <span className="text-[10px] text-slate-500 block">After Debt & Expenses</span>
+          <span className="text-[10px] text-slate-500 block truncate">After Debt & Expenses</span>
         </div>
       </div>
 
@@ -231,7 +231,7 @@ export default function YieldBreakdown({
         <div>
           <div className="flex justify-between text-slate-300 font-medium mb-1">
             <span>Estimated Monthly Rent:</span>
-            <span className="text-cyan-400 font-mono font-bold">₦{Math.round(estimatedRentUsd).toLocaleString()}/mo</span>
+            <span className="text-cyan-400 font-mono font-bold">₦{Math.round(estimatedRentUsd || 0).toLocaleString()}/mo</span>
           </div>
           <div className="flex items-center gap-2 mb-1.5">
             <button

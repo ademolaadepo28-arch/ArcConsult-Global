@@ -8,16 +8,16 @@
  * @param {number} [extraMonthlyPrincipalCents=0] - Optional additional principal payment
  */
 function calculateAmortization(principalCents, annualRate, years, extraMonthlyPrincipalCents = 0) {
-  if (principalCents <= 0) {
-    return { monthlyPaymentCents: 0, totalPayments: 0, schedule: [] };
+  if (!principalCents || principalCents <= 0 || !years || years <= 0) {
+    return { monthlyPaymentCents: 0, totalPayments: 0, originalTermMonths: 0, totalInterestPaidCents: 0, totalPrincipalPaidCents: 0, totalCostCents: 0, schedule: [] };
   }
 
-  const monthlyRate = annualRate / 100 / 12;
-  const totalPayments = years * 12;
+  const monthlyRate = annualRate > 0 ? (annualRate / 100 / 12) : 0;
+  const totalPayments = Math.max(1, Math.round(years * 12));
 
   // Monthly Payment Formula: M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1 ]
   let monthlyPaymentCents = 0;
-  if (monthlyRate === 0) {
+  if (monthlyRate <= 0) {
     monthlyPaymentCents = Math.round(principalCents / totalPayments);
   } else {
     monthlyPaymentCents = Math.round(
@@ -138,7 +138,7 @@ function calculateComprehensivePayment({
  */
 function calculateInvestmentMetrics({
   purchasePriceCents,
-  estimatedMonthlyRentCents,
+  estimatedMonthlyRentCents = 0,
   annualPropertyTaxCents = 0,
   monthlyHoaCents = 0,
   downPaymentPercent = 20,
@@ -149,10 +149,27 @@ function calculateInvestmentMetrics({
   maintenanceRatePercent = 1, // 1% of purchase price annually
   annualAppreciationPercent = 3.5
 }) {
-  const annualGrossRentCents = estimatedMonthlyRentCents * 12;
-  const grossRentalYieldPercent = Number(
-    ((annualGrossRentCents / purchasePriceCents) * 100).toFixed(2)
-  );
+  if (!purchasePriceCents || purchasePriceCents <= 0) {
+    return {
+      purchasePriceCents: 0,
+      estimatedMonthlyRentCents: 0,
+      annualGrossRentCents: 0,
+      grossRentalYieldPercent: 0,
+      netOperatingIncomeCents: 0,
+      capRatePercent: 0,
+      annualDebtServiceCents: 0,
+      netAnnualCashFlowCents: 0,
+      monthlyCashFlowCents: 0,
+      initialCashInvestedCents: 0,
+      cashOnCashReturnPercent: 0,
+      tenYearProjection: []
+    };
+  }
+
+  const annualGrossRentCents = (estimatedMonthlyRentCents || 0) * 12;
+  const grossRentalYieldPercent = purchasePriceCents > 0
+    ? Number(((annualGrossRentCents / purchasePriceCents) * 100).toFixed(2))
+    : 0;
 
   const vacancyLossCents = Math.round(annualGrossRentCents * (vacancyRatePercent / 100));
   const effectiveGrossIncomeCents = annualGrossRentCents - vacancyLossCents;
@@ -163,13 +180,13 @@ function calculateInvestmentMetrics({
     annualPropertyTaxCents + annualHoaCents + annualInsuranceCents + annualMaintenanceCents;
 
   const netOperatingIncomeCents = effectiveGrossIncomeCents - totalOperatingExpensesCents;
-  const capRatePercent = Number(
-    ((netOperatingIncomeCents / purchasePriceCents) * 100).toFixed(2)
-  );
+  const capRatePercent = purchasePriceCents > 0
+    ? Number(((netOperatingIncomeCents / purchasePriceCents) * 100).toFixed(2))
+    : 0;
 
   // Mortgage debt service
   const downPaymentCents = Math.round(purchasePriceCents * (downPaymentPercent / 100));
-  const principalCents = purchasePriceCents - downPaymentCents;
+  const principalCents = Math.max(0, purchasePriceCents - downPaymentCents);
   const amort = calculateAmortization(principalCents, annualRate, loanYears);
   const annualDebtServiceCents = amort.monthlyPaymentCents * 12;
 
@@ -180,9 +197,9 @@ function calculateInvestmentMetrics({
   const closingCostsCents = Math.round(purchasePriceCents * 0.03);
   const initialCashInvestedCents = downPaymentCents + closingCostsCents;
 
-  const cashOnCashReturnPercent = Number(
-    ((netAnnualCashFlowCents / initialCashInvestedCents) * 100).toFixed(2)
-  );
+  const cashOnCashReturnPercent = initialCashInvestedCents > 0
+    ? Number(((netAnnualCashFlowCents / initialCashInvestedCents) * 100).toFixed(2))
+    : 0;
 
   // 10-Year Growth & Equity Accumulation
   const tenYearProjection = [];

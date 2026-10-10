@@ -55,10 +55,20 @@ async function searchSaleProperties({
       }
     });
 
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      return {
+        success: false,
+        status: res.status,
+        message: 'Non-JSON response from RapidAPI endpoint',
+        subscribed: false
+      };
+    }
 
     // Check for RapidAPI subscription or quota limitation errors
-    if (!res.ok || (data && data.message && data.message.includes('not subscribed'))) {
+    if (!res.ok || (data && data.message && typeof data.message === 'string' && data.message.includes('not subscribed'))) {
       return {
         success: false,
         status: res.status,
@@ -104,18 +114,27 @@ function normalizeListing(item) {
   const lat = item.latitude || (item.location && item.location.latitude) || (item.latLong && item.latLong.latitude);
   const lng = item.longitude || (item.location && item.location.longitude) || (item.latLong && item.latLong.longitude);
 
+  const priceCents = Math.round(Number(price) * 100);
+
   return {
     id: String(item.zpid || item.id || `ext-${Math.random().toString(36).slice(2, 9)}`),
     title: item.streetAddress || item.address || 'Residential Property',
-    price_cents: Math.round(Number(price) * 100),
-    bedrooms: item.bedrooms || item.beds || 3,
-    bathrooms: item.bathrooms || item.baths || 2,
-    square_feet: item.livingArea || item.sqft || 2000,
+    description: item.description || 'Verified property listing imported via external MLS data feed.',
+    property_type: (item.homeType || item.propertyType || 'SINGLE_FAMILY').toUpperCase().replace(/\s+/g, '_'),
+    status: 'ACTIVE',
+    price_cents: priceCents,
+    estimated_hoa_monthly_cents: Math.round(priceCents * 0.003),
+    annual_property_tax_cents: Math.round(priceCents * 0.015),
+    estimated_monthly_rent_cents: Math.round(priceCents * 0.007),
+    bedrooms: Number(item.bedrooms || item.beds || 3),
+    bathrooms: Number(item.bathrooms || item.baths || 2),
+    square_feet: Number(item.livingArea || item.sqft || 2000),
     street_address: item.streetAddress || item.address || '',
     city: item.city || '',
     state: item.state || '',
     zip_code: item.zipcode || item.zipCode || '',
     image_url: item.imgSrc || item.photo || (item.photos && item.photos[0]) || '/images/properties/prop-1-main.jpg',
+    alt_image_url: (item.photos && item.photos[1]) || item.imgSrc || '/images/properties/prop-1-alt.jpg',
     lat: lat ? Number(lat) : null,
     lng: lng ? Number(lng) : null,
     source: 'RAPIDAPI_ZILLOW'

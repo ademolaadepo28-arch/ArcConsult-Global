@@ -201,77 +201,77 @@ export default function AmortizationChart({
       </div>
 
       {/* Primary Payment Cards Grid (Clickable to switch visualizer tabs) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
         <button
           type="button"
           onClick={() => setActiveTab('CURVE')}
-          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+          className={`text-left p-3 rounded-xl border transition-all touch-active min-w-0 ${
             activeTab === 'CURVE'
               ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
               : 'bg-slate-900/60 border-white/5 hover:border-white/20'
           }`}
           title="Click to view Paydown Curve"
         >
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5 truncate">
             Total Monthly Payment
           </span>
-          <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono block">
+          <span className="text-base xs:text-lg sm:text-xl font-extrabold text-emerald-400 font-mono block truncate">
             ₦{Math.round(summary.totalMonthlyPaymentUsd).toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 block">P&I + Service Charge + LUC</span>
+          <span className="text-[10px] text-slate-500 block truncate">P&I + Service Charge + LUC</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('BREAKDOWN')}
-          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+          className={`text-left p-3 rounded-xl border transition-all touch-active min-w-0 ${
             activeTab === 'BREAKDOWN'
               ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
               : 'bg-slate-900/60 border-white/5 hover:border-white/20'
           }`}
           title="Click to view Annual P&I Breakdown"
         >
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5 truncate">
             Principal & Interest
           </span>
-          <span className="text-lg sm:text-xl font-bold text-white font-mono block">
+          <span className="text-base xs:text-lg sm:text-xl font-bold text-white font-mono block truncate">
             ₦{Math.round(summary.monthlyPrincipalInterestUsd).toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 block">Base Debt Service</span>
+          <span className="text-[10px] text-slate-500 block truncate">Base Debt Service</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('SENSITIVITY')}
-          className={`text-left p-3 rounded-xl border transition-all touch-active ${
+          className={`text-left p-3 rounded-xl border transition-all touch-active min-w-0 ${
             activeTab === 'SENSITIVITY'
               ? 'bg-slate-900/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
               : 'bg-slate-900/60 border-white/5 hover:border-white/20'
           }`}
           title="Click to view Rate Sensitivity Matrix"
         >
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5 truncate">
             Total Interest Paid
           </span>
-          <span className="text-lg sm:text-xl font-bold text-rose-400 font-mono block">
+          <span className="text-base xs:text-lg sm:text-xl font-bold text-rose-400 font-mono block truncate">
             ₦{Math.round(summary.totalInterestPaidUsd).toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 block">{loanYears} Years Life</span>
+          <span className="text-[10px] text-slate-500 block truncate">{loanYears} Years Life</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('CURVE')}
-          className="text-left bg-slate-900/60 hover:border-white/20 p-3 rounded-xl border border-white/5 transition-all touch-active"
+          className="text-left bg-slate-900/60 hover:border-white/20 p-3 rounded-xl border border-white/5 transition-all touch-active min-w-0"
           title="Click to view Loan Balance Curve"
         >
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5 truncate">
             Loan Principal
           </span>
-          <span className="text-lg sm:text-xl font-bold text-cyan-400 font-mono block">
+          <span className="text-base xs:text-lg sm:text-xl font-bold text-cyan-400 font-mono block truncate">
             ₦{Math.round(summary.principalUsd).toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 block">{100 - downPaymentPercent}% LTV</span>
+          <span className="text-[10px] text-slate-500 block truncate">{100 - downPaymentPercent}% LTV</span>
         </button>
       </div>
 
@@ -282,7 +282,7 @@ export default function AmortizationChart({
           <div className="flex justify-between text-slate-300 font-medium mb-1">
             <span>Down Payment:</span>
             <span className="text-emerald-400 font-mono font-bold">
-              {downPaymentPercent}% (₦{Math.round((propertyPriceUsd * downPaymentPercent) / 100).toLocaleString()})
+              {downPaymentPercent}% (₦{Math.round(((propertyPriceUsd || 0) * downPaymentPercent) / 100).toLocaleString()})
             </span>
           </div>
           <div className="flex items-center gap-2 mb-1.5">
@@ -429,7 +429,7 @@ export default function AmortizationChart({
       </div>
 
       {/* Responsive Visualizer Area */}
-      <div className="h-[240px] sm:h-[280px] w-full pt-1">
+      <div className="h-[220px] xs:h-[250px] sm:h-[280px] w-full pt-1">
         {activeTab === 'CURVE' && <Line data={balanceChartData} options={chartOptions} />}
 
         {activeTab === 'BREAKDOWN' && (
@@ -447,7 +447,7 @@ export default function AmortizationChart({
         )}
 
         {activeTab === 'SENSITIVITY' && (
-          <div className="h-full overflow-y-auto pr-1">
+          <div className="h-full overflow-y-auto touch-scroll pr-1">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 bg-[#0d121d] z-10">
                 <tr className="border-b border-white/10 text-slate-400 font-medium">
@@ -459,7 +459,9 @@ export default function AmortizationChart({
               </thead>
               <tbody className="divide-y divide-white/5">
                 {sensitivity?.map((item) => {
-                  const diff = item.monthlyPaymentUsd - summary.monthlyPrincipalInterestUsd;
+                  const currentPayment = summary?.monthlyPrincipalInterestUsd || 0;
+                  const itemPayment = item.monthlyPaymentUsd || 0;
+                  const diff = itemPayment - currentPayment;
                   return (
                     <tr
                       key={item.rate}
@@ -479,8 +481,8 @@ export default function AmortizationChart({
                           </span>
                         )}
                       </td>
-                      <td className="py-2.5 px-2.5 font-mono">₦{Math.round(item.monthlyPaymentUsd).toLocaleString()}</td>
-                      <td className="py-2.5 px-2.5 font-mono hidden sm:table-cell">₦{Math.round(item.totalCostUsd - summary.principalUsd).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono">₦{Math.round(itemPayment).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono hidden sm:table-cell">₦{Math.round((item.totalCostUsd || 0) - (summary?.principalUsd || 0)).toLocaleString()}</td>
                       <td className="py-2.5 px-2.5 font-mono font-semibold">
                         {diff === 0 ? '—' : (diff > 0 ? `+₦${Math.round(diff).toLocaleString()}` : `-₦${Math.round(Math.abs(diff)).toLocaleString()}`)}
                       </td>

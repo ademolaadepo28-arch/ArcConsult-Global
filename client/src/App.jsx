@@ -235,36 +235,36 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col pb-28 sm:pb-32 lg:pb-8 overflow-x-hidden">
       {/* Top Luxury Navigation Header */}
-      <header className="sticky top-0 z-[1500] bg-[#090d15]/90 backdrop-blur-xl border-b border-white/10 px-3.5 sm:px-8 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20">
+      <header className="sticky top-0 z-[1500] bg-[#090d15]/95 backdrop-blur-xl border-b border-white/10 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 shrink-0">
             <div className="w-full h-full bg-[#090d15] rounded-[10px] flex items-center justify-center">
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <h1 className="text-sm sm:text-lg font-extrabold text-white tracking-tight font-heading">
+              <h1 className="text-sm sm:text-base lg:text-lg font-extrabold text-white tracking-tight font-heading truncate">
                 ArcConsult <span className="gradient-text-emerald">Nigeria</span>
               </h1>
               <button
                 type="button"
                 onClick={() => setIsSpecOpen(true)}
-                className="hidden sm:inline-flex badge-tag badge-emerald font-mono text-[10px] cursor-pointer hover:bg-emerald-400 hover:text-slate-950 transition-all touch-active"
+                className="hidden xs:inline-flex badge-tag badge-emerald font-mono text-[9px] sm:text-[10px] cursor-pointer hover:bg-emerald-400 hover:text-slate-950 transition-all touch-active"
                 title="View Spec #05 Architecture, PostGIS Queries & Demo Token"
               >
                 Spec #05
               </button>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block">
+            <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block truncate">
               Geospatial Vector Discovery • PostGIS Engine • Lagos & Abuja 20-Year Mortgage & Yield Analytics
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Spatial Performance HUD - Click to Refetch */}
           <button
             type="button"
@@ -283,7 +283,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setIsSpecOpen(true)}
-            className="btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/10 touch-active"
+            className="btn-secondary text-xs py-1.5 px-2 sm:py-2 sm:px-3 flex items-center gap-1.5 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/10 touch-active"
             title="View system architecture, PostGIS queries, and demo JWT token"
           >
             <Cpu className="w-3.5 h-3.5" />
@@ -294,10 +294,11 @@ export default function App() {
           <button
             type="button"
             onClick={handleOpenComparison}
-            className="btn-secondary text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 flex items-center gap-1.5 hover:border-emerald-500/40 touch-active"
+            className="btn-secondary text-xs py-1.5 px-2 sm:py-2 sm:px-3 flex items-center gap-1.5 hover:border-emerald-500/40 touch-active"
           >
             <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Compare ({savedPortfolios.length})</span>
+            <span className="hidden xs:inline">Compare</span>
+            <span>({savedPortfolios.length})</span>
           </button>
         </div>
       </header>
@@ -331,15 +332,15 @@ export default function App() {
       </div>
 
       {/* Main Content Dashboard */}
-      <main className="flex-1 p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 max-w-[1680px] w-full mx-auto">
+      <main className="flex-1 p-2.5 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 max-w-[1720px] w-full mx-auto">
         {/* Left Column: Leaflet Map & Search Filters (7 Cols) */}
         <div
-          className={`lg:col-span-7 flex flex-col gap-4 sm:gap-5 ${
+          className={`lg:col-span-7 flex flex-col gap-3.5 sm:gap-5 ${
             mobileViewTab === 'MAP' ? 'flex' : 'hidden lg:flex'
           }`}
         >
           {/* Leaflet Map Card */}
-          <div className="h-[360px] sm:h-[450px] lg:h-[500px] w-full">
+          <div className="h-[320px] xs:h-[380px] sm:h-[450px] lg:h-[500px] xl:h-[540px] w-full rounded-2xl overflow-hidden shadow-2xl">
             <PropertyMap
               properties={properties}
               selectedProperty={selectedProperty}
@@ -400,7 +401,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[460px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-h-[480px] sm:max-h-[500px] lg:max-h-[520px] overflow-y-auto touch-scroll pr-1">
               {sortedProperties.map((prop) => {
                 const isSelected = selectedProperty?.id === prop.id;
                 const bookmarked = isBookmarked(prop.id);
@@ -414,7 +415,7 @@ export default function App() {
                     }`}
                   >
                     {/* Realistic Property Image Thumbnail */}
-                    <div className="relative h-28 w-full rounded-xl overflow-hidden bg-slate-900">
+                    <div className="relative h-36 xs:h-40 sm:h-28 w-full rounded-xl overflow-hidden bg-slate-900">
                       <img
                         src={prop.image_url || '/images/properties/prop-1-main.jpg'}
                         alt={prop.title}
@@ -430,7 +431,7 @@ export default function App() {
                       {/* Property Type Badge Overlay */}
                       <div className="absolute top-2 left-2 flex items-center gap-1.5">
                         <span className="badge-tag badge-cyan text-[9px] py-0.5 px-2 bg-slate-950/80 backdrop-blur-md">
-                          {prop.property_type.replace('_', ' ')}
+                          {(prop.property_type || '').replace('_', ' ')}
                         </span>
                       </div>
 
@@ -461,7 +462,7 @@ export default function App() {
                     {/* Listing Title & Address */}
                     <div>
                       <h4 className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-1 group-hover:text-emerald-300 transition-colors">
-                        {prop.title}
+                        {prop.title || 'Residential Asset'}
                       </h4>
                       <p className="text-[11px] text-slate-400 line-clamp-1">{prop.street_address}</p>
                     </div>
@@ -469,11 +470,11 @@ export default function App() {
                     {/* Key Metrics */}
                     <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[11px] text-slate-400">
                       <div className="flex items-center gap-1.5">
-                        <span>{prop.bedrooms} bd</span>
+                        <span>{prop.bedrooms ?? '—'} bd</span>
                         <span>•</span>
-                        <span>{prop.bathrooms} ba</span>
+                        <span>{prop.bathrooms ?? '—'} ba</span>
                         <span>•</span>
-                        <span>{prop.square_feet?.toLocaleString()} sqft</span>
+                        <span>{prop.square_feet ? prop.square_feet.toLocaleString() : '—'} sqft</span>
                       </div>
                       <span className="text-[10px] text-emerald-400 font-mono font-semibold">
                         {prop.city}, Nigeria
@@ -506,9 +507,9 @@ export default function App() {
                         type="button"
                         onClick={() => updateFilters({ propertyType: selectedProperty.property_type })}
                         className="badge-tag badge-cyan text-[9px] sm:text-[10px] cursor-pointer hover:bg-cyan-400 hover:text-slate-950 transition-colors"
-                        title={`Filter listings by ${selectedProperty.property_type.replace('_', ' ')}`}
+                        title={`Filter listings by ${(selectedProperty.property_type || '').replace('_', ' ')}`}
                       >
-                        {selectedProperty.property_type.replace('_', ' ')}
+                        {(selectedProperty.property_type || '').replace('_', ' ')}
                       </button>
                     </div>
                     <h2 className="text-lg sm:text-xl font-extrabold text-white leading-tight">
@@ -541,7 +542,7 @@ export default function App() {
                 </div>
 
                 {/* Interactive Realistic Photo Showcase */}
-                <div className="relative w-full h-48 sm:h-56 rounded-xl overflow-hidden bg-slate-900 border border-white/10 group shadow-lg">
+                <div className="relative w-full h-44 xs:h-52 sm:h-60 rounded-xl overflow-hidden bg-slate-900 border border-white/10 group shadow-lg">
                   <img
                     src={
                       selectedPhotoTab === 'MAIN'
@@ -645,8 +646,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => {
-                      const shareText = `${selectedProperty.title} - ${selectedProperty.street_address}, ${selectedProperty.city}: ₦${(selectedProperty.price_cents / 100).toLocaleString()}`;
-                      navigator.clipboard.writeText(shareText);
+                      const shareText = `${selectedProperty.title} - ${selectedProperty.street_address || ''}, ${selectedProperty.city || ''}: ₦${Math.round((selectedProperty.price_cents || 0) / 100).toLocaleString()}`;
+                      if (navigator.clipboard?.writeText) {
+                        navigator.clipboard.writeText(shareText).catch(() => {});
+                      }
                       setCopiedAddress(true);
                       setTimeout(() => setCopiedAddress(false), 2000);
                     }}
@@ -668,42 +671,47 @@ export default function App() {
                 </div>
 
                 <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 sm:line-clamp-none">
-                  {selectedProperty.description}
+                  {selectedProperty.description || 'Exclusive luxury residential asset in prime Nigerian metropolitan location.'}
                 </p>
 
                 {/* Property Specification Chips */}
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5 text-center text-xs">
-                  <div>
-                    <span className="text-[9px] sm:text-[10px] text-slate-400 block">Price</span>
-                    <span className="font-extrabold text-emerald-400 font-mono text-xs sm:text-sm">
-                      ₦{(selectedProperty.price_cents / 100).toLocaleString()}
+                <div className="grid grid-cols-2 xs:grid-cols-4 gap-1.5 sm:gap-2 bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5 text-center text-xs">
+                  <div className="min-w-0">
+                    <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">Price</span>
+                    <span
+                      className="font-extrabold text-emerald-400 font-mono text-xs sm:text-sm block truncate"
+                      title={`₦${Math.round((selectedProperty.price_cents || 0) / 100).toLocaleString()}`}
+                    >
+                      {formatNaira((selectedProperty.price_cents || 0) / 100)}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-[9px] sm:text-[10px] text-slate-400 block">Beds / Baths</span>
-                    <span className="font-bold text-white text-xs sm:text-sm">
-                      {selectedProperty.bedrooms} / {selectedProperty.bathrooms}
+                  <div className="min-w-0">
+                    <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">Beds / Baths</span>
+                    <span className="font-bold text-white text-xs sm:text-sm block truncate">
+                      {selectedProperty.bedrooms ?? '—'} / {selectedProperty.bathrooms ?? '—'}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-[9px] sm:text-[10px] text-slate-400 block">SqFt</span>
-                    <span className="font-bold text-white text-xs sm:text-sm">
-                      {selectedProperty.square_feet.toLocaleString()}
+                  <div className="min-w-0">
+                    <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">SqFt</span>
+                    <span className="font-bold text-white text-xs sm:text-sm block truncate">
+                      {selectedProperty.square_feet ? selectedProperty.square_feet.toLocaleString() : '—'}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-[9px] sm:text-[10px] text-slate-400 block">Built</span>
-                    <span className="font-bold text-white text-xs sm:text-sm">{selectedProperty.year_built || '—'}</span>
+                  <div className="min-w-0">
+                    <span className="text-[9px] sm:text-[10px] text-slate-400 block truncate">Built</span>
+                    <span className="font-bold text-white text-xs sm:text-sm block truncate">
+                      {selectedProperty.year_built || '—'}
+                    </span>
                   </div>
                 </div>
 
                 {/* HOA and Annual Property Tax */}
-                <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 px-1">
-                  <span>
-                    Service Charge: <strong className="text-slate-200">₦{(selectedProperty.estimated_hoa_monthly_cents / 100).toLocaleString()}/mo</strong>
+                <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-1 text-[11px] sm:text-xs text-slate-400 px-1">
+                  <span className="truncate">
+                    Service Charge: <strong className="text-slate-200 font-mono">₦{Math.round((selectedProperty.estimated_hoa_monthly_cents || 0) / 100).toLocaleString()}/mo</strong>
                   </span>
-                  <span>
-                    Lagos LUC: <strong className="text-slate-200">₦{(selectedProperty.annual_property_tax_cents / 100).toLocaleString()}/yr</strong>
+                  <span className="truncate">
+                    Lagos LUC: <strong className="text-slate-200 font-mono">₦{Math.round((selectedProperty.annual_property_tax_cents || 0) / 100).toLocaleString()}/yr</strong>
                   </span>
                 </div>
               </div>
@@ -789,18 +797,23 @@ export default function App() {
 
       {/* Floating Action Pill on Mobile when in MAP view */}
       {selectedProperty && mobileViewTab === 'MAP' && (
-        <div className="lg:hidden fixed bottom-4 left-3 right-3 z-[1400] animate-fadeIn">
-          <div className="glass-panel p-3 bg-slate-950/95 border border-emerald-500/40 shadow-2xl flex items-center justify-between gap-3">
+        <div className="lg:hidden fixed bottom-3 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 z-[1400] max-w-lg mx-auto animate-fadeIn safe-bottom-pad">
+          <div className="glass-panel p-2.5 sm:p-3 bg-slate-950/95 border border-emerald-500/40 shadow-2xl flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <span className="text-[10px] text-emerald-400 uppercase font-mono font-bold block">Selected Listing</span>
+              <span className="text-[9px] sm:text-[10px] text-emerald-400 uppercase font-mono font-bold block truncate">Selected Listing</span>
               <p className="text-xs font-bold text-white truncate">{selectedProperty.title}</p>
-              <p className="text-xs font-mono font-extrabold text-emerald-400">₦{(selectedProperty.price_cents / 100).toLocaleString()}</p>
+              <p
+                className="text-xs font-mono font-extrabold text-emerald-400"
+                title={`₦${Math.round((selectedProperty.price_cents || 0) / 100).toLocaleString()}`}
+              >
+                {formatNaira((selectedProperty.price_cents || 0) / 100)}
+              </p>
             </div>
             <button
               onClick={() => setMobileViewTab('ANALYTICS')}
-              className="btn-primary text-xs py-2 px-3 flex items-center gap-1.5 shrink-0"
+              className="btn-primary text-xs py-2 px-2.5 sm:px-3 flex items-center gap-1 sm:gap-1.5 shrink-0 touch-active"
             >
-              <span>View Analytics</span>
+              <span>Financials</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -954,14 +967,14 @@ export default function App() {
             {/* Lightbox Footer */}
             <div className="flex items-center justify-between p-3.5 bg-slate-900/60 border-t border-white/10 text-xs text-slate-300">
               <span className="font-mono text-emerald-400 font-bold text-sm">
-                ₦{(selectedProperty.price_cents / 100).toLocaleString()}
+                ₦{Math.round((selectedProperty.price_cents || 0) / 100).toLocaleString()}
               </span>
               <div className="flex items-center gap-3 text-slate-400">
-                <span>{selectedProperty.bedrooms} Beds</span>
+                <span>{selectedProperty.bedrooms ?? '—'} Beds</span>
                 <span>•</span>
-                <span>{selectedProperty.bathrooms} Baths</span>
+                <span>{selectedProperty.bathrooms ?? '—'} Baths</span>
                 <span>•</span>
-                <span>{selectedProperty.square_feet} SqFt</span>
+                <span>{selectedProperty.square_feet ? selectedProperty.square_feet.toLocaleString() : '—'} SqFt</span>
               </div>
             </div>
           </div>

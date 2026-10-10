@@ -74,4 +74,19 @@ describe('Mortgage Amortization Formula', () => {
     assert.ok(yields.capRatePercent > 0);
     assert.equal(yields.tenYearProjection.length, 10);
   });
+
+  test('safely handles zero principal, zero rate, and zero purchase price edge cases', () => {
+    const zeroAmort = calculateAmortization(0, 6.5, 30);
+    assert.equal(zeroAmort.monthlyPaymentCents, 0);
+    assert.equal(zeroAmort.schedule.length, 0);
+
+    const zeroRateAmort = calculateAmortization(12000000, 0, 10);
+    assert.equal(zeroRateAmort.monthlyPaymentCents, 100000);
+    assert.equal(zeroRateAmort.totalInterestPaidCents, 0);
+
+    const zeroYields = calculateInvestmentMetrics({ purchasePriceCents: 0, estimatedMonthlyRentCents: 0 });
+    assert.equal(zeroYields.grossRentalYieldPercent, 0);
+    assert.equal(zeroYields.capRatePercent, 0);
+    assert.equal(zeroYields.cashOnCashReturnPercent, 0);
+  });
 });

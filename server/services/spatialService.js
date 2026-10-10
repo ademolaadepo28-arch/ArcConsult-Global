@@ -35,7 +35,7 @@ async function searchByBoundingBox(minLng, minLat, maxLng, maxLat, filters = {})
   if (isPostgres && pool) {
     let query = `
       SELECT id, title, description, property_type, status, price_cents,
-        estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
+        estimated_hoa_monthly_cents, annual_property_tax_cents, estimated_monthly_rent_cents, bedrooms,
         bathrooms, square_feet, year_built, street_address, city, state, zip_code,
         image_url, alt_image_url,
         ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat
@@ -67,10 +67,15 @@ async function searchByBoundingBox(minLng, minLat, maxLng, maxLat, filters = {})
   }
 
   // Fallback in-memory spatial search
+  const minX = Math.min(minLng, maxLng);
+  const maxX = Math.max(minLng, maxLng);
+  const minY = Math.min(minLat, maxLat);
+  const maxY = Math.max(minLat, maxLat);
+
   return db.fallbackProperties.filter((p) => {
     const insideBbox =
-      p.lng >= minLng && p.lng <= maxLng &&
-      p.lat >= minLat && p.lat <= maxLat;
+      p.lng >= minX && p.lng <= maxX &&
+      p.lat >= minY && p.lat <= maxY;
 
     if (!insideBbox) return false;
     if (filters.minPriceCents && p.price_cents < filters.minPriceCents) return false;
@@ -96,7 +101,7 @@ async function searchByRadius(centerLng, centerLat, radiusMeters = 5000, filters
   if (isPostgres && pool) {
     let query = `
       SELECT id, title, description, property_type, status, price_cents,
-        estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
+        estimated_hoa_monthly_cents, annual_property_tax_cents, estimated_monthly_rent_cents, bedrooms,
         bathrooms, square_feet, year_built, street_address, city, state, zip_code,
         image_url, alt_image_url,
         ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat,

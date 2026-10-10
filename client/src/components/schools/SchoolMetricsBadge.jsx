@@ -43,7 +43,7 @@ export default function SchoolMetricsBadge({ schools = [], onSelectSchool }) {
               : 'text-amber-400 border-amber-500/30 bg-amber-500/10';
 
           const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            school.name + ', Austin, TX'
+            school.name + ', Lagos, Nigeria'
           )}`;
 
           return (

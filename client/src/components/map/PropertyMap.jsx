@@ -158,20 +158,21 @@ export default function PropertyMap({
       )}
 
       {/* Top Map HUD Bar: Engine Info & Query Latency */}
-      <div className="absolute top-4 left-4 z-[1000] flex flex-wrap items-center gap-2 pointer-events-auto">
-        <div className="glass-panel px-3 py-1.5 flex items-center gap-2 text-xs font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-emerald-400 font-semibold">Nigeria PostGIS Engine</span>
+      <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-[1000] flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto max-w-[calc(100%-52px)] sm:max-w-none">
+        <div className="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+          <span className="text-emerald-400 font-semibold hidden xs:inline">Nigeria PostGIS Engine</span>
+          <span className="text-emerald-400 font-semibold xs:hidden">PostGIS</span>
           <span className="text-white/30">•</span>
           <span className="text-slate-300 font-mono">{executionTimeMs}ms</span>
         </div>
 
         {/* Metro Quick Switchers */}
-        <div className="glass-panel p-0.5 flex items-center text-xs">
+        <div className="glass-panel p-0.5 flex items-center text-[11px] sm:text-xs">
           <button
             type="button"
             onClick={handleFlyToLagos}
-            className="px-2.5 py-1 rounded-lg text-emerald-400 hover:bg-emerald-500/10 font-semibold transition-colors cursor-pointer"
+            className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-emerald-400 hover:bg-emerald-500/10 font-semibold transition-colors cursor-pointer touch-active"
             title="Focus Lagos Metro (Island, Ikoyi, Lekki)"
           >
             Lagos Hub
@@ -180,7 +181,7 @@ export default function PropertyMap({
           <button
             type="button"
             onClick={handleFlyToAbuja}
-            className="px-2.5 py-1 rounded-lg text-cyan-400 hover:bg-cyan-500/10 font-semibold transition-colors cursor-pointer"
+            className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-cyan-400 hover:bg-cyan-500/10 font-semibold transition-colors cursor-pointer touch-active"
             title="Focus Abuja FCT (Maitama)"
           >
             Abuja Hub
@@ -189,50 +190,50 @@ export default function PropertyMap({
 
         <button
           onClick={() => setShowSchools(!showSchools)}
-          className={`glass-panel px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition-all ${
+          className={`glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold cursor-pointer transition-all touch-active ${
             showSchools ? 'text-indigo-300 border-indigo-500/40 bg-indigo-950/40' : 'text-slate-400'
           }`}
           title="Toggle neighborhood school overlay"
         >
-          <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+          <GraduationCap className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
           <span>Schools ({schools.length})</span>
         </button>
       </div>
 
       {/* Floating Map Zoom & Orientation Tools */}
-      <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-2 pointer-events-auto">
+      <div className="absolute right-2.5 top-2.5 sm:right-4 sm:top-4 z-[1000] flex flex-col gap-1.5 sm:gap-2 pointer-events-auto">
         <button
           onClick={handleZoomIn}
-          className="glass-panel w-9 h-9 flex items-center justify-center text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
+          className="glass-panel w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-200 hover:text-white hover:bg-white/10 transition-colors touch-active"
           title="Zoom In"
         >
-          <ZoomIn className="w-4 h-4" />
+          <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="glass-panel w-9 h-9 flex items-center justify-center text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
+          className="glass-panel w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-200 hover:text-white hover:bg-white/10 transition-colors touch-active"
           title="Zoom Out"
         >
-          <ZoomOut className="w-4 h-4" />
+          <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
         <button
           onClick={handleResetCenter}
-          className="glass-panel w-9 h-9 flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-white/10 transition-colors"
-          title="Recenter Austin Metro"
+          className="glass-panel w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-white/10 transition-colors touch-active"
+          title="Recenter Lagos Hub"
         >
-          <Compass className="w-4 h-4" />
+          <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
       </div>
 
       {/* Bottom Floating Search Legend */}
-      <div className="absolute bottom-4 left-4 z-[1000] pointer-events-none">
-        <div className="glass-panel px-3 py-1.5 flex items-center gap-3 text-[11px] text-slate-400">
+      <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 z-[1000] pointer-events-none hidden xs:block">
+        <div className="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-2.5 sm:gap-3 text-[10px] sm:text-[11px] text-slate-400">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-            <span>Listing Price Pin</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+            <span>Listing Price</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_8px_#6366f1]" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-indigo-500 shadow-[0_0_8px_#6366f1]" />
             <span>Top-Tier School</span>
           </div>
           <div className="flex items-center gap-1.5">

@@ -13,8 +13,9 @@ async function getSavedPortfolios(req, res) {
     if (isPostgres && pool) {
       const query = `
         SELECT sp.property_id, sp.notes, sp.saved_at,
-          p.title, p.price_cents, p.property_type, p.bedrooms, p.bathrooms,
+          p.title, p.price_cents, (p.price_cents / 100) as price_usd, p.property_type, p.bedrooms, p.bathrooms,
           p.square_feet, p.street_address, p.city, p.state, p.zip_code,
+          p.image_url, p.alt_image_url, p.estimated_hoa_monthly_cents, p.annual_property_tax_cents, p.estimated_monthly_rent_cents,
           ST_X(p.location::geometry) as lng, ST_Y(p.location::geometry) as lat
         FROM saved_portfolios sp
         JOIN properties p ON p.id = sp.property_id

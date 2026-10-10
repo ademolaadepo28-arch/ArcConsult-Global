@@ -8,12 +8,12 @@ function validateMortgageParams(req, res, next) {
     return res.status(400).json({ error: 'Property price must be a positive number' });
   }
 
-  if (annualRate !== undefined && (isNaN(annualRate) || annualRate < 0 || annualRate > 30)) {
-    return res.status(400).json({ error: 'Annual rate must be between 0% and 30%' });
+  if (annualRate !== undefined && (isNaN(annualRate) || Number(annualRate) < 0 || Number(annualRate) > 40)) {
+    return res.status(400).json({ error: 'Annual rate must be between 0% and 40%' });
   }
 
-  if (loanYears !== undefined && (![10, 15, 20, 25, 30, 40].includes(Number(loanYears)))) {
-    return res.status(400).json({ error: 'Loan term must be a standard period (e.g. 15, 20, 30 years)' });
+  if (loanYears !== undefined && (isNaN(loanYears) || Number(loanYears) < 1 || Number(loanYears) > 50)) {
+    return res.status(400).json({ error: 'Loan term must be between 1 and 50 years' });
   }
 
   next();

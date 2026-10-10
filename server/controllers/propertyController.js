@@ -81,7 +81,7 @@ async function getPropertyById(req, res) {
     if (isPostgres && pool) {
       const query = `
         SELECT id, title, description, property_type, status, price_cents,
-          estimated_hoa_monthly_cents, annual_property_tax_cents, bedrooms,
+          estimated_hoa_monthly_cents, annual_property_tax_cents, estimated_monthly_rent_cents, bedrooms,
           bathrooms, square_feet, year_built, street_address, city, state, zip_code,
           image_url, alt_image_url,
           ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat
@@ -103,9 +103,9 @@ async function getPropertyById(req, res) {
     return res.json({
       property: {
         ...property,
-        price_usd: property.price_cents / 100,
+        price_usd: (property.price_cents || 0) / 100,
         hoa_monthly_usd: (property.estimated_hoa_monthly_cents || 0) / 100,
-        annual_tax_usd: property.annual_property_tax_cents / 100
+        annual_tax_usd: (property.annual_property_tax_cents || 0) / 100
       },
       schools
     });

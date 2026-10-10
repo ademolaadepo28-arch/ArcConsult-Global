@@ -30,10 +30,11 @@ CREATE TABLE IF NOT EXISTS properties (
   description TEXT,
   property_type property_type_enum NOT NULL DEFAULT 'SINGLE_FAMILY',
   status listing_status_enum NOT NULL DEFAULT 'ACTIVE',
-  -- Integer Financial Fields (stored in USD cents)
+  -- Integer Financial Fields (stored in NGN kobo / cents)
   price_cents BIGINT NOT NULL,
-  estimated_hoa_monthly_cents INT DEFAULT 0,
-  annual_property_tax_cents INT NOT NULL,
+  estimated_hoa_monthly_cents BIGINT DEFAULT 0,
+  annual_property_tax_cents BIGINT NOT NULL,
+  estimated_monthly_rent_cents BIGINT DEFAULT 0,
   -- Physical Attributes
   bedrooms INT NOT NULL,
   bathrooms NUMERIC(3,1) NOT NULL,
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS properties (
   -- Address and Spatial Geometry
   street_address VARCHAR(255) NOT NULL,
   city VARCHAR(100) NOT NULL,
-  state VARCHAR(2) NOT NULL,
+  state VARCHAR(10) NOT NULL,
   zip_code VARCHAR(10) NOT NULL,
   image_url VARCHAR(500),
   alt_image_url VARCHAR(500),

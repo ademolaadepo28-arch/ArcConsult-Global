@@ -166,37 +166,58 @@ async function compareProperties(req, res) {
       return res.status(400).json({ error: 'propertyIds must be a non-empty array' });
     }
 
-    const properties = db.fallbackProperties.filter((p) => propertyIds.includes(p.id));
+    let properties = [];
+    const isPostgres = db.isConnectedToPostgres();
+    const pool = db.getPool();
+
+    if (isPostgres && pool) {
+      const placeholders = propertyIds.map((_, i) => `$${i + 1}`).join(',');
+      const result = await pool.query(
+        `SELECT id, title, description, property_type, status, price_cents,
+          estimated_hoa_monthly_cents, annual_property_tax_cents, estimated_monthly_rent_cents,
+          bedrooms, bathrooms, square_feet, year_built, street_address, city, state, zip_code,
+          image_url, alt_image_url
+        FROM properties WHERE id IN (${placeholders})`,
+        propertyIds
+      );
+      properties = result.rows;
+    } else {
+      properties = db.fallbackProperties.filter((p) => propertyIds.includes(p.id));
+    }
+
     const comparisons = properties.map((p) => {
+      const priceCents = Number(p.price_cents) || 0;
       const amort = mortgageEngine.calculateComprehensivePayment({
-        priceCents: p.price_cents,
+        priceCents,
         downPaymentPercent: 25,
         annualRate: 18.5,
         loanYears: 20,
-        annualPropertyTaxCents: p.annual_property_tax_cents,
-        estimatedHoaMonthlyCents: p.estimated_hoa_monthly_cents
+        annualPropertyTaxCents: Number(p.annual_property_tax_cents) || 0,
+        estimatedHoaMonthlyCents: Number(p.estimated_hoa_monthly_cents) || 0
       });
 
-      const rentCents = p.estimated_monthly_rent_cents || Math.round(p.price_cents * 0.006);
+      const rentCents = Number(p.estimated_monthly_rent_cents) || Math.round(priceCents * 0.006);
       const yields = mortgageEngine.calculateInvestmentMetrics({
-        purchasePriceCents: p.price_cents,
+        purchasePriceCents: priceCents,
         estimatedMonthlyRentCents: rentCents,
-        annualPropertyTaxCents: p.annual_property_tax_cents,
-        monthlyHoaCents: p.estimated_hoa_monthly_cents
+        annualPropertyTaxCents: Number(p.annual_property_tax_cents) || 0,
+        monthlyHoaCents: Number(p.estimated_hoa_monthly_cents) || 0
       });
+
+      const sqft = Number(p.square_feet) || 0;
 
       return {
         id: p.id,
-        title: p.title,
+        title: p.title || 'Property',
         property_type: p.property_type,
-        street_address: p.street_address,
+        street_address: p.street_address || '',
         image_url: p.image_url || null,
         alt_image_url: p.alt_image_url || null,
-        priceUsd: p.price_cents / 100,
+        priceUsd: priceCents / 100,
         bedrooms: p.bedrooms,
         bathrooms: p.bathrooms,
-        square_feet: p.square_feet,
-        pricePerSqFtUsd: Math.round(p.price_cents / 100 / p.square_feet),
+        square_feet: sqft,
+        pricePerSqFtUsd: sqft > 0 ? Math.round(priceCents / 100 / sqft) : 0,
         monthlyPaymentUsd: amort.totalMonthlyPaymentCents / 100,
         monthlyPrincipalInterestUsd: amort.monthlyPrincipalInterestCents / 100,
         monthlyPropertyTaxUsd: amort.monthlyPropertyTaxCents / 100,
