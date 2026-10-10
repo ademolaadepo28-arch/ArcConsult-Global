@@ -1,4 +1,4 @@
--- Seed Data for Real Estate & Mortgages Analytics Portal
+-- Seed Data for Real Estate & Mortgages Analytics Portal (Nigeria Hub)
 
 -- Clean existing data
 TRUNCATE TABLE saved_portfolios CASCADE;
@@ -8,18 +8,19 @@ TRUNCATE TABLE users CASCADE;
 
 -- Insert Demo User
 INSERT INTO users (id, email, password_hash, full_name) VALUES
-('a0000000-0000-0000-0000-000000000001', 'investor@arcconsult.com', '$2a$10$examplehashedpasswordhereforportfolio', 'Alexander Wright');
+('a0000000-0000-0000-0000-000000000001', 'investor@arcconsult.ng', '$2a$10$examplehashedpasswordhereforportfolio', 'Babatunde Adeleke');
 
--- Insert Schools (Austin & Bay Area hubs)
+-- Insert Nigerian Schools
 INSERT INTO schools (id, name, rating, school_type, location) VALUES
-('b0000000-0000-0000-0000-000000000001', 'Barton Hills Elementary', 9.2, 'Elementary', ST_SetSRID(ST_MakePoint(-97.7785, 30.2520), 4326)),
-('b0000000-0000-0000-0000-000000000002', 'O. Henry Middle School', 8.7, 'Middle', ST_SetSRID(ST_MakePoint(-97.7710, 30.2790), 4326)),
-('b0000000-0000-0000-0000-000000000003', 'Austin High School', 8.9, 'High', ST_SetSRID(ST_MakePoint(-97.7650, 30.2720), 4326)),
-('b0000000-0000-0000-0000-000000000004', 'Zilker Elementary School', 9.5, 'Elementary', ST_SetSRID(ST_MakePoint(-97.7680, 30.2580), 4326)),
-('b0000000-0000-0000-0000-000000000005', 'Westlake High School', 9.8, 'High', ST_SetSRID(ST_MakePoint(-97.8010, 30.2850), 4326)),
-('b0000000-0000-0000-0000-000000000006', 'Highland Park Elementary', 9.1, 'Elementary', ST_SetSRID(ST_MakePoint(-97.7610, 30.3420), 4326));
+('b0000000-0000-0000-0000-000000000001', 'British International School (BIS)', 9.6, 'International Secondary', ST_SetSRID(ST_MakePoint(3.4420, 6.4355), 4326)),
+('b0000000-0000-0000-0000-000000000002', 'Corona School Ikoyi', 9.4, 'Primary / Elementary', ST_SetSRID(ST_MakePoint(3.4320, 6.4550), 4326)),
+('b0000000-0000-0000-0000-000000000003', 'American International School of Lagos', 9.8, 'International K-12', ST_SetSRID(ST_MakePoint(3.4390, 6.4320), 4326)),
+('b0000000-0000-0000-0000-000000000004', 'Lekki British International School', 9.2, 'Secondary / High', ST_SetSRID(ST_MakePoint(3.4780, 6.4460), 4326)),
+('b0000000-0000-0000-0000-000000000005', 'Grange School Ikeja GRA', 9.5, 'International K-12', ST_SetSRID(ST_MakePoint(3.3580, 6.5890), 4326)),
+('b0000000-0000-0000-0000-000000000006', 'Children''s International School (CIS)', 9.3, 'Elementary / Middle', ST_SetSRID(ST_MakePoint(3.4850, 6.4390), 4326)),
+('b0000000-0000-0000-0000-000000000007', 'The Regent College Maitama', 9.7, 'International Sixth Form', ST_SetSRID(ST_MakePoint(7.4890, 9.0850), 4326));
 
--- Insert Diverse Properties
+-- Insert Diverse Nigerian Properties
 INSERT INTO properties (
   id, title, description, property_type, status,
   price_cents, estimated_hoa_monthly_cents, annual_property_tax_cents,
@@ -29,94 +30,94 @@ INSERT INTO properties (
 ) VALUES
 (
   'c0000000-0000-0000-0000-000000000001',
-  'Modern Zilker Architectural Haven',
-  'Sun-drenched contemporary craftsman with floor-to-ceiling glass, custom oak cabinetry, zero-scape gardens, and direct greenbelt trail access.',
+  'Banana Island Ultra-Waterfront Villa',
+  'Spectacular contemporary waterfront estate in private gated Banana Island featuring private yacht slipway, infinity pool overlooking Lagos Lagoon, automated smart home automation, Olympic gym, and detached twin staff quarters.',
   'SINGLE_FAMILY', 'ACTIVE',
-  89500000, 0, 1420000,
-  4, 3.5, 3150, 2021,
-  '2104 Paramount Ave', 'Austin', 'TX', '78704',
+  285000000000, 85000000, 450000000,
+  6, 7.5, 8400, 2023,
+  'Zone L Close 204, Banana Island', 'Ikoyi, Lagos', 'LA', '101233',
   '/images/properties/prop-1-main.jpg', '/images/properties/prop-1-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7694, 30.2543), 4326)
+  ST_SetSRID(ST_MakePoint(3.4475, 6.4635), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000002',
-  'The Independent Sky Residence',
-  'Luxury high-rise condo offering panoramic Lady Bird Lake views, quartz waterfall island, 24/7 concierge, and resort infinity pool.',
+  'Eko Pearl Azure Penthouse',
+  'Super-penthouse atop Eko Atlantic City offering 360-degree unobstructed Atlantic Ocean views, floor-to-ceiling soundproof Schuco glazing, private sky terrace, concierge, and independent IPP green power grid.',
   'CONDO', 'ACTIVE',
-  64500000, 78500, 1150000,
-  2, 2.0, 1420, 2019,
-  '301 West Ave Unit 3402', 'Austin', 'TX', '78701',
+  145000000000, 65000000, 220000000,
+  4, 4.5, 4600, 2022,
+  'Ocean Parade, Eko Pearl Towers', 'Eko Atlantic City, Lagos', 'LA', '101241',
   '/images/properties/prop-2-main.jpg', '/images/properties/prop-2-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7505, 30.2678), 4326)
+  ST_SetSRID(ST_MakePoint(3.4070, 6.4180), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000003',
-  'Bouldin Creek Eco-Townhome',
-  'Net-zero energy townhome featuring rooftop solar array, private plunge spa, EV charging garage, and walkable to iconic culinary row.',
+  'Bourne Smart Terrace Duplex',
+  'Brand-new contemporary smart duplex along Lekki Phase 1 corridor featuring double-volume ceilings, private rooftop plunge pool, solar inverter hybrid system, motorized gate, and Italian fitted chef kitchen.',
   'TOWNHOUSE', 'ACTIVE',
-  72500000, 29000, 1260000,
-  3, 2.5, 2180, 2022,
-  '908 S 3rd St Unit B', 'Austin', 'TX', '78704',
+  58000000000, 25000000, 95000000,
+  4, 4.5, 3200, 2024,
+  'Admiralty Way', 'Lekki Phase 1, Lagos', 'LA', '105102',
   '/images/properties/prop-3-main.jpg', '/images/properties/prop-3-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7554, 30.2562), 4326)
+  ST_SetSRID(ST_MakePoint(3.4735, 6.4474), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000004',
-  'Travis Heights Historic Quadplex',
-  'High-yield multi-family asset with four fully leased boutique flats, private entries, vintage hardwood, and strong occupancy history.',
+  'Victoria Island Serviced Residence Block',
+  'High-yield commercial multi-family residential asset with 6 luxury serviced apartments, rooftop executive lounge, Cummins dual generator backup, high corporate tenant occupancy history.',
   'MULTI_FAMILY', 'ACTIVE',
-  145000000, 0, 2480000,
-  8, 6.0, 4800, 1968,
-  '1412 Newning Ave', 'Austin', 'TX', '78704',
+  420000000000, 120000000, 680000000,
+  12, 14.0, 12000, 2021,
+  'Ahmadu Bello Way', 'Victoria Island, Lagos', 'LA', '101241',
   '/images/properties/prop-4-main.jpg', '/images/properties/prop-4-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7479, 30.2486), 4326)
+  ST_SetSRID(ST_MakePoint(3.4219, 6.4281), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000005',
-  'Clarksville Historic Bungalow',
-  'Restored 1920s classic bungalow in prime central Clarksville with wrap-around porch, designer lighting, and detached guest studio.',
+  'Old Ikoyi Colonial Heritage Mansion',
+  'Prestige Bourdillon trophy residence set on 2,000sqm mature landscaped grounds with ancient mahogany trees, heated Olympic lap pool, cinema hall, bespoke wine cellar, and high-security diplomatic perimeter.',
   'SINGLE_FAMILY', 'ACTIVE',
-  112000000, 0, 1950000,
-  3, 2.0, 2450, 1928,
-  '1608 Waterston Ave', 'Austin', 'TX', '78703',
+  350000000000, 50000000, 520000000,
+  5, 6.0, 7500, 2020,
+  'Bourdillon Road', 'Old Ikoyi, Lagos', 'LA', '101233',
   '/images/properties/prop-5-main.jpg', '/images/properties/prop-5-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7601, 30.2789), 4326)
+  ST_SetSRID(ST_MakePoint(3.4350, 6.4520), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000006',
-  'Seaholm Waterfront Loft',
-  'Industrial chic loft in the historic Seaholm district featuring 14ft exposed concrete ceilings, Sub-Zero appliances, and private terrace.',
+  'Signature Creek Waterfront Loft',
+  'Chic metropolitan loft overlooking Five Cowries Creek and Lekki-Ikoyi Link Bridge, designer Poggenpohl kitchen, marble bathrooms, smart biometric entry, and rooftop helipad access.',
   'CONDO', 'ACTIVE',
-  53500000, 62000, 940000,
-  1, 1.5, 980, 2016,
-  '222 West Ave Unit 1205', 'Austin', 'TX', '78701',
+  75000000000, 38000000, 110000000,
+  2, 2.5, 2100, 2023,
+  'Ozumba Mbadiwe Avenue', 'Victoria Island, Lagos', 'LA', '101241',
   '/images/properties/prop-6-main.jpg', '/images/properties/prop-6-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7512, 30.2662), 4326)
+  ST_SetSRID(ST_MakePoint(3.4150, 6.4340), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000007',
-  'Barton Hills Mid-Century Retreat',
-  'Tucked into tranquil limestone bluffs with cedar tongue-and-groove ceilings, expansive canyon deck, and private access to Barton Creek.',
+  'Ikeja GRA Executive Secluded Villa',
+  'Quiet leafy diplomatic avenue in historic Ikeja GRA with expansive manicured courtyard, swimming pool, perimeter CCTV, borehole water treatment plant, and 8 minutes to Murtala Muhammed International Airport.',
   'SINGLE_FAMILY', 'ACTIVE',
-  98000000, 0, 1680000,
-  4, 3.0, 3300, 1974,
-  '2610 Barton Hills Dr', 'Austin', 'TX', '78704',
+  110000000000, 30000000, 180000000,
+  5, 5.5, 5600, 2022,
+  'Isaac John Street', 'Ikeja GRA, Lagos', 'LA', '100271',
   '/images/properties/prop-7-main.jpg', '/images/properties/prop-7-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7831, 30.2472), 4326)
+  ST_SetSRID(ST_MakePoint(3.3550, 6.5925), 4326)
 ),
 (
   'c0000000-0000-0000-0000-000000000008',
-  'Mueller Urban Townhome',
-  'LEED Gold certified modern corner townhome overlooking tree-lined greenway, solar thermal water heating, and attached double garage.',
-  'TOWNHOUSE', 'ACTIVE',
-  59900000, 22000, 1020000,
-  3, 2.5, 1950, 2020,
-  '4112 Simond Ave', 'Austin', 'TX', '78723',
+  'Maitama Hills Diplomatic Villa',
+  'Exclusive hilltop ambassadorial villa overlooking Aso Rock and the Abuja city skyline, bulletproof glazing, private elevator, subterranean parking for 8 cars, and lush cascading terrace gardens.',
+  'SINGLE_FAMILY', 'ACTIVE',
+  220000000000, 45000000, 380000000,
+  6, 7.0, 7200, 2023,
+  'Gana Street', 'Maitama District, Abuja', 'FCT', '900271',
   '/images/properties/prop-8-main.jpg', '/images/properties/prop-8-alt.jpg',
-  ST_SetSRID(ST_MakePoint(-97.7081, 30.2985), 4326)
+  ST_SetSRID(ST_MakePoint(7.4983, 9.0882), 4326)
 );
 
 -- Insert Initial Saved Portfolio Bookmark
 INSERT INTO saved_portfolios (user_id, property_id, notes) VALUES
-('a0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'Top candidate for family residence. Barton Hills Elementary rating 9.2.'),
-('a0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000004', 'Strong candidate for 1031 exchange cash flow. Gross yield projected > 7.5%.');
+('a0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'Top tier Banana Island waterfront asset. Proximity to British International School & Corona Ikoyi.'),
+('a0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000004', 'Strong candidate for Victoria Island corporate short-let rental cash flow. Gross yield projected > 9.1%.');

@@ -88,10 +88,15 @@ export default function MapCluster({
         if (!prop.lat || !prop.lng) return;
 
         const isSelected = selectedPropertyId === prop.id;
-        const formattedPrice = `$${(prop.price_cents / 10000000).toFixed(2)}M`.replace('.00M', 'M');
-        const shortPrice = prop.price_cents < 100000000
-          ? `$${Math.round(prop.price_cents / 100000)}k`
-          : formattedPrice;
+        const nairaVal = prop.price_cents / 100;
+        let shortPrice;
+        if (nairaVal >= 1000000000) {
+          shortPrice = `₦${(nairaVal / 1000000000).toFixed(2).replace(/\.00$/, '')}B`;
+        } else if (nairaVal >= 1000000) {
+          shortPrice = `₦${Math.round(nairaVal / 1000000)}M`;
+        } else {
+          shortPrice = `₦${Math.round(nairaVal / 1000)}k`;
+        }
 
         const markerHtml = `
           <div class="custom-price-pin ${isSelected ? 'selected' : ''}">
@@ -102,25 +107,25 @@ export default function MapCluster({
         const customIcon = Leaflet.divIcon({
           className: 'price-pin-wrapper',
           html: markerHtml,
-          iconSize: [60, 26],
-          iconAnchor: [30, 13]
+          iconSize: [68, 26],
+          iconAnchor: [34, 13]
         });
 
         const marker = Leaflet.marker([prop.lat, prop.lng], { icon: customIcon });
 
         const popupContent = `
-          <div style="font-family: Inter, sans-serif; width: 190px; color: #f1f5f9; padding: 2px;">
-            <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; margin-bottom: 6px; background: #0f172a;">
+          <div style="font-family: Inter, sans-serif; width: 200px; color: #f1f5f9; padding: 2px;">
+            <div style="width: 100%; height: 100px; border-radius: 8px; overflow: hidden; margin-bottom: 6px; background: #0f172a;">
               <img src="${prop.image_url || '/images/properties/prop-1-main.jpg'}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/properties/prop-1-main.jpg'" />
             </div>
             <div style="font-weight: 800; font-size: 13px; color: #34d399; font-family: Outfit, sans-serif;">
-              $${(prop.price_cents / 100).toLocaleString()}
+              ₦${(prop.price_cents / 100).toLocaleString()}
             </div>
             <div style="font-size: 11px; font-weight: 700; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${prop.title}
             </div>
             <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">
-              ${prop.bedrooms} bd • ${prop.bathrooms} ba • ${prop.square_feet} sqft
+              ${prop.bedrooms} bd • ${prop.bathrooms} ba • ${prop.square_feet ? prop.square_feet.toLocaleString() : ''} sqft
             </div>
           </div>
         `;

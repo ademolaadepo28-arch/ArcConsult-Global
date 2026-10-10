@@ -10,9 +10,9 @@ function calculateAmortization(req, res) {
     const {
       priceCents,
       priceUsd,
-      downPaymentPercent = 20,
-      annualRate = 6.5,
-      loanYears = 30,
+      downPaymentPercent = 25,
+      annualRate = 18.5,
+      loanYears = 20,
       annualPropertyTaxCents,
       annualPropertyTaxUsd,
       estimatedHoaMonthlyCents,
@@ -103,13 +103,13 @@ function calculateInvestmentYields(req, res) {
       estimatedMonthlyRentUsd,
       annualPropertyTaxCents,
       monthlyHoaCents,
-      downPaymentPercent = 20,
-      annualRate = 6.5,
-      loanYears = 30,
+      downPaymentPercent = 25,
+      annualRate = 18.5,
+      loanYears = 20,
       vacancyRatePercent = 5,
-      annualInsuranceCents = 140000,
+      annualInsuranceCents = 250000000,
       maintenanceRatePercent = 1,
-      annualAppreciationPercent = 3.5
+      annualAppreciationPercent = 12.0
     } = req.body;
 
     const finalPriceCents = purchasePriceCents || Math.round(Number(purchasePriceUsd || 600000) * 100);
@@ -170,9 +170,9 @@ async function compareProperties(req, res) {
     const comparisons = properties.map((p) => {
       const amort = mortgageEngine.calculateComprehensivePayment({
         priceCents: p.price_cents,
-        downPaymentPercent: 20,
-        annualRate: 6.5,
-        loanYears: 30,
+        downPaymentPercent: 25,
+        annualRate: 18.5,
+        loanYears: 20,
         annualPropertyTaxCents: p.annual_property_tax_cents,
         estimatedHoaMonthlyCents: p.estimated_hoa_monthly_cents
       });

@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "node --test test/mortgageEngine.test.js"
+    "test": "node --test test/mortgageEngine.test.js",
+    "test:rapidapi": "node test-rapidapi.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

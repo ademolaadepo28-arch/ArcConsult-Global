@@ -30,10 +30,10 @@ ChartJS.register(
 export default function AmortizationChart({
   amortizationData,
   onParamChange,
-  propertyPriceUsd = 895000,
-  downPaymentPercent = 20,
-  annualRate = 6.5,
-  loanYears = 30,
+  propertyPriceUsd = 1250000000,
+  downPaymentPercent = 25,
+  annualRate = 18.5,
+  loanYears = 20,
   extraMonthlyPrincipalUsd = 0
 }) {
   const [activeTab, setActiveTab] = useState('CURVE'); // 'CURVE' | 'BREAKDOWN' | 'SENSITIVITY'
@@ -57,7 +57,7 @@ export default function AmortizationChart({
     labels,
     datasets: [
       {
-        label: 'Remaining Balance ($)',
+        label: 'Remaining Balance (₦)',
         data: yearlyData.map((s) => s.remainingBalanceUsd),
         borderColor: '#f43f5e',
         backgroundColor: 'rgba(244, 63, 94, 0.12)',
@@ -68,7 +68,7 @@ export default function AmortizationChart({
         pointHoverRadius: 5
       },
       {
-        label: 'Principal Paid ($)',
+        label: 'Principal Paid (₦)',
         data: yearlyData.map((s) => s.cumulativePrincipalUsd),
         borderColor: '#10b981',
         backgroundColor: 'rgba(16, 185, 129, 0.12)',
@@ -86,13 +86,13 @@ export default function AmortizationChart({
     labels: labels.slice(0, 15),
     datasets: [
       {
-        label: 'Principal ($)',
+        label: 'Principal (₦)',
         data: yearlyData.slice(0, 15).map((s) => s.principalUsd * 12),
         backgroundColor: 'rgba(16, 185, 129, 0.8)',
         borderRadius: 4
       },
       {
-        label: 'Interest ($)',
+        label: 'Interest (₦)',
         data: yearlyData.slice(0, 15).map((s) => s.interestUsd * 12),
         backgroundColor: 'rgba(244, 63, 94, 0.75)',
         borderRadius: 4
@@ -123,7 +123,7 @@ export default function AmortizationChart({
         borderWidth: 1,
         padding: 8,
         callbacks: {
-          label: (context) => ` ${context.dataset.label}: $${Math.round(context.raw).toLocaleString()}`
+          label: (context) => ` ${context.dataset.label}: ₦${Math.round(context.raw).toLocaleString()}`
         }
       }
     },
@@ -137,7 +137,11 @@ export default function AmortizationChart({
         ticks: {
           color: '#94a3b8',
           font: { family: 'Inter', size: 10 },
-          callback: (value) => `$${(value / 1000).toFixed(0)}k`
+          callback: (value) => {
+            if (value >= 1000000000) return `₦${(value / 1000000000).toFixed(1)}B`;
+            if (value >= 1000000) return `₦${Math.round(value / 1000000)}M`;
+            return `₦${(value / 1000).toFixed(0)}k`;
+          }
         }
       }
     }
@@ -212,9 +216,9 @@ export default function AmortizationChart({
             Total Monthly Payment
           </span>
           <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono block">
-            ${Math.round(summary.totalMonthlyPaymentUsd).toLocaleString()}
+            ₦{Math.round(summary.totalMonthlyPaymentUsd).toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 block">PITI + HOA + PMI</span>
+          <span className="text-[10px] text-slate-500 block">P&I + Service Charge + LUC</span>
         </button>
 
         <button
@@ -231,7 +235,7 @@ export default function AmortizationChart({
             Principal & Interest
           </span>
           <span className="text-lg sm:text-xl font-bold text-white font-mono block">
-            ${Math.round(summary.monthlyPrincipalInterestUsd).toLocaleString()}
+            ₦{Math.round(summary.monthlyPrincipalInterestUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">Base Debt Service</span>
         </button>
@@ -250,7 +254,7 @@ export default function AmortizationChart({
             Total Interest Paid
           </span>
           <span className="text-lg sm:text-xl font-bold text-rose-400 font-mono block">
-            ${Math.round(summary.totalInterestPaidUsd).toLocaleString()}
+            ₦{Math.round(summary.totalInterestPaidUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">{loanYears} Years Life</span>
         </button>
@@ -265,7 +269,7 @@ export default function AmortizationChart({
             Loan Principal
           </span>
           <span className="text-lg sm:text-xl font-bold text-cyan-400 font-mono block">
-            ${Math.round(summary.principalUsd).toLocaleString()}
+            ₦{Math.round(summary.principalUsd).toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 block">{100 - downPaymentPercent}% LTV</span>
         </button>
@@ -278,7 +282,7 @@ export default function AmortizationChart({
           <div className="flex justify-between text-slate-300 font-medium mb-1">
             <span>Down Payment:</span>
             <span className="text-emerald-400 font-mono font-bold">
-              {downPaymentPercent}% (${Math.round((propertyPriceUsd * downPaymentPercent) / 100).toLocaleString()})
+              {downPaymentPercent}% (₦{Math.round((propertyPriceUsd * downPaymentPercent) / 100).toLocaleString()})
             </span>
           </div>
           <div className="flex items-center gap-2 mb-1.5">
@@ -305,7 +309,7 @@ export default function AmortizationChart({
             </button>
           </div>
           <div className="flex gap-1">
-            {[10, 20, 30].map((pct) => (
+            {[15, 25, 35].map((pct) => (
               <button
                 key={pct}
                 onClick={() => onParamChange('downPaymentPercent', pct)}
@@ -329,29 +333,29 @@ export default function AmortizationChart({
           </div>
           <div className="flex items-center gap-2 mb-1.5">
             <button
-              onClick={() => onParamChange('annualRate', Number(Math.max(3.0, annualRate - 0.25).toFixed(2)))}
+              onClick={() => onParamChange('annualRate', Number(Math.max(12.0, annualRate - 0.25).toFixed(2)))}
               className="w-6 h-6 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 touch-active"
             >
               <Minus className="w-3 h-3" />
             </button>
             <input
               type="range"
-              min="3.0"
-              max="11.0"
-              step="0.125"
+              min="12.0"
+              max="26.0"
+              step="0.25"
               value={annualRate}
               onChange={(e) => onParamChange('annualRate', Number(e.target.value))}
               className="flex-1"
             />
             <button
-              onClick={() => onParamChange('annualRate', Number(Math.min(11.0, annualRate + 0.25).toFixed(2)))}
+              onClick={() => onParamChange('annualRate', Number(Math.min(26.0, annualRate + 0.25).toFixed(2)))}
               className="w-6 h-6 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 touch-active"
             >
               <Plus className="w-3 h-3" />
             </button>
           </div>
           <div className="flex gap-1">
-            {[5.5, 6.5, 7.5].map((rate) => (
+            {[16.5, 18.5, 21.0].map((rate) => (
               <button
                 key={rate}
                 onClick={() => onParamChange('annualRate', rate)}
@@ -374,7 +378,7 @@ export default function AmortizationChart({
             <span className="text-emerald-400 font-mono font-bold">{loanYears} Years</span>
           </div>
           <div className="grid grid-cols-3 gap-1 mt-1">
-            {[15, 20, 30].map((term) => (
+            {[10, 15, 20].map((term) => (
               <button
                 key={term}
                 onClick={() => onParamChange('loanYears', term)}
@@ -394,19 +398,19 @@ export default function AmortizationChart({
         <div>
           <div className="flex justify-between text-slate-300 font-medium mb-1">
             <span>Extra Principal /mo:</span>
-            <span className="text-emerald-400 font-mono font-bold">+${extraMonthlyPrincipalUsd}</span>
+            <span className="text-emerald-400 font-mono font-bold">+₦{extraMonthlyPrincipalUsd.toLocaleString()}</span>
           </div>
           <input
             type="range"
             min="0"
-            max="2000"
-            step="50"
+            max="5000000"
+            step="100000"
             value={extraMonthlyPrincipalUsd}
             onChange={(e) => onParamChange('extraMonthlyPrincipalUsd', Number(e.target.value))}
             className="w-full mt-1 mb-1.5"
           />
           <div className="flex gap-1">
-            {[0, 100, 250, 500].map((amt) => (
+            {[0, 500000, 1000000, 2500000].map((amt) => (
               <button
                 key={amt}
                 type="button"
@@ -417,7 +421,7 @@ export default function AmortizationChart({
                     : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
                 }`}
               >
-                {amt === 0 ? '$0' : `+$${amt}`}
+                {amt === 0 ? '₦0' : `+₦${amt >= 1000000 ? `${amt / 1000000}M` : `${amt / 1000}k`}`}
               </button>
             ))}
           </div>
@@ -475,10 +479,10 @@ export default function AmortizationChart({
                           </span>
                         )}
                       </td>
-                      <td className="py-2.5 px-2.5 font-mono">${Math.round(item.monthlyPaymentUsd).toLocaleString()}</td>
-                      <td className="py-2.5 px-2.5 font-mono hidden sm:table-cell">${Math.round(item.totalCostUsd - summary.principalUsd).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono">₦{Math.round(item.monthlyPaymentUsd).toLocaleString()}</td>
+                      <td className="py-2.5 px-2.5 font-mono hidden sm:table-cell">₦{Math.round(item.totalCostUsd - summary.principalUsd).toLocaleString()}</td>
                       <td className="py-2.5 px-2.5 font-mono font-semibold">
-                        {diff === 0 ? '—' : (diff > 0 ? `+$${Math.round(diff)}` : `-$${Math.round(Math.abs(diff))}`)}
+                        {diff === 0 ? '—' : (diff > 0 ? `+₦${Math.round(diff).toLocaleString()}` : `-₦${Math.round(Math.abs(diff)).toLocaleString()}`)}
                       </td>
                     </tr>
                   );

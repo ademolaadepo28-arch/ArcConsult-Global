@@ -6,8 +6,8 @@ import { TrendingUp, PieChart, DollarSign, ShieldAlert, Award, Plus, Minus } fro
 export default function YieldBreakdown({
   yieldData,
   onParamChange,
-  estimatedRentUsd = 4500,
-  appreciationPercent = 3.5,
+  estimatedRentUsd = 2500000,
+  appreciationPercent = 12.0,
   vacancyPercent = 5
 }) {
   const [viewTab, setViewTab] = useState('EQUITY'); // 'EQUITY' | 'CASHFLOW'
@@ -24,7 +24,7 @@ export default function YieldBreakdown({
 
   // Donut chart of Revenue allocation
   const doughnutData = {
-    labels: ['Debt Service', 'Net Cash Flow', 'OpEx (Tax/HOA/Maint)'],
+    labels: ['Debt Service', 'Net Cash Flow', 'OpEx (LUC/Service/Maint)'],
     datasets: [
       {
         data: [
@@ -49,7 +49,7 @@ export default function YieldBreakdown({
     datasets: [
       {
         type: 'line',
-        label: 'Property Value ($)',
+        label: 'Property Value (₦)',
         data: tenYearProjection.map((p) => p.propertyValueUsd),
         borderColor: '#38bdf8',
         backgroundColor: 'rgba(56, 189, 248, 0.1)',
@@ -59,14 +59,14 @@ export default function YieldBreakdown({
       },
       {
         type: 'bar',
-        label: 'Accumulated Equity ($)',
+        label: 'Accumulated Equity (₦)',
         data: tenYearProjection.map((p) => p.accumulatedEquityUsd),
         backgroundColor: 'rgba(16, 185, 129, 0.75)',
         borderRadius: 4
       },
       {
         type: 'bar',
-        label: 'Mortgage Debt ($)',
+        label: 'Mortgage Debt (₦)',
         data: tenYearProjection.map((p) => p.remainingMortgageUsd),
         backgroundColor: 'rgba(244, 63, 94, 0.45)',
         borderRadius: 4
@@ -84,7 +84,7 @@ export default function YieldBreakdown({
       tooltip: {
         backgroundColor: '#0f172a',
         callbacks: {
-          label: (context) => ` ${context.dataset.label}: $${Math.round(context.raw).toLocaleString()}`
+          label: (context) => ` ${context.dataset.label}: ₦${Math.round(context.raw).toLocaleString()}`
         }
       }
     },
@@ -95,7 +95,11 @@ export default function YieldBreakdown({
         ticks: {
           color: '#94a3b8',
           font: { size: 10 },
-          callback: (value) => `$${(value / 1000).toFixed(0)}k`
+          callback: (value) => {
+            if (value >= 1000000000) return `₦${(value / 1000000000).toFixed(1)}B`;
+            if (value >= 1000000) return `₦${Math.round(value / 1000000)}M`;
+            return `₦${(value / 1000).toFixed(0)}k`;
+          }
         }
       }
     }
@@ -216,7 +220,7 @@ export default function YieldBreakdown({
             <span className="text-[9px] text-cyan-400/60 group-hover:text-cyan-300 font-mono">Chart ↗</span>
           </div>
           <span className={`text-lg sm:text-xl font-bold font-mono ${metrics.monthlyCashFlowUsd >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {metrics.monthlyCashFlowUsd >= 0 ? `+$${Math.round(metrics.monthlyCashFlowUsd)}` : `-$${Math.round(Math.abs(metrics.monthlyCashFlowUsd))}`}
+            {metrics.monthlyCashFlowUsd >= 0 ? `+₦${Math.round(metrics.monthlyCashFlowUsd).toLocaleString()}` : `-₦${Math.round(Math.abs(metrics.monthlyCashFlowUsd)).toLocaleString()}`}
           </span>
           <span className="text-[10px] text-slate-500 block">After Debt & Expenses</span>
         </div>
@@ -227,33 +231,33 @@ export default function YieldBreakdown({
         <div>
           <div className="flex justify-between text-slate-300 font-medium mb-1">
             <span>Estimated Monthly Rent:</span>
-            <span className="text-cyan-400 font-mono font-bold">${Math.round(estimatedRentUsd).toLocaleString()}/mo</span>
+            <span className="text-cyan-400 font-mono font-bold">₦{Math.round(estimatedRentUsd).toLocaleString()}/mo</span>
           </div>
           <div className="flex items-center gap-2 mb-1.5">
             <button
-              onClick={() => onParamChange('estimatedRentUsd', Math.max(1500, estimatedRentUsd - 200))}
+              onClick={() => onParamChange('estimatedRentUsd', Math.max(500000, estimatedRentUsd - 200000))}
               className="w-6 h-6 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 touch-active"
             >
               <Minus className="w-3 h-3" />
             </button>
             <input
               type="range"
-              min="1500"
-              max="12000"
-              step="100"
+              min="500000"
+              max="15000000"
+              step="100000"
               value={estimatedRentUsd}
               onChange={(e) => onParamChange('estimatedRentUsd', Number(e.target.value))}
               className="flex-1"
             />
             <button
-              onClick={() => onParamChange('estimatedRentUsd', Math.min(12000, estimatedRentUsd + 200))}
+              onClick={() => onParamChange('estimatedRentUsd', Math.min(15000000, estimatedRentUsd + 200000))}
               className="w-6 h-6 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 touch-active"
             >
               <Plus className="w-3 h-3" />
             </button>
           </div>
           <div className="flex gap-1">
-            {[3500, 4800, 6500, 8500].map((rentVal) => (
+            {[1500000, 2500000, 5000000, 8000000].map((rentVal) => (
               <button
                 key={rentVal}
                 type="button"
@@ -264,7 +268,7 @@ export default function YieldBreakdown({
                     : 'border-white/5 text-slate-400 bg-white/5 hover:bg-white/10'
                 }`}
               >
-                ${rentVal / 1000}k
+                ₦{rentVal >= 1000000 ? `${rentVal / 1000000}M` : `${rentVal / 1000}k`}
               </button>
             ))}
           </div>
@@ -278,14 +282,14 @@ export default function YieldBreakdown({
           <input
             type="range"
             min="0"
-            max="10"
+            max="25"
             step="0.5"
             value={appreciationPercent}
             onChange={(e) => onParamChange('appreciationPercent', Number(e.target.value))}
             className="w-full mt-1 mb-1.5"
           />
           <div className="flex gap-1">
-            {[2.0, 3.5, 5.0, 7.0].map((rate) => (
+            {[5.0, 10.0, 12.5, 15.0].map((rate) => (
               <button
                 key={rate}
                 type="button"

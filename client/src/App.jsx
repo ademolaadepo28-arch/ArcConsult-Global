@@ -81,16 +81,29 @@ export default function App() {
   const [selectedPhotoTab, setSelectedPhotoTab] = useState('MAIN'); // 'MAIN' | 'ALT'
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  // Amortization simulation state
-  const [downPaymentPercent, setDownPaymentPercent] = useState(20);
-  const [annualRate, setAnnualRate] = useState(6.5);
-  const [loanYears, setLoanYears] = useState(30);
+  // Currency formatter helper
+  const formatNaira = (amount) => {
+    if (amount === undefined || amount === null || isNaN(amount)) return '₦0';
+    const num = Math.round(Number(amount));
+    if (num >= 1000000000) {
+      return `₦${(num / 1000000000).toFixed(2).replace(/\.00$/, '')}B`;
+    }
+    if (num >= 1000000) {
+      return `₦${Math.round(num / 1000000)}M`;
+    }
+    return `₦${num.toLocaleString()}`;
+  };
+
+  // Amortization simulation state (standard Nigerian commercial mortgage)
+  const [downPaymentPercent, setDownPaymentPercent] = useState(25);
+  const [annualRate, setAnnualRate] = useState(18.5);
+  const [loanYears, setLoanYears] = useState(20);
   const [extraMonthlyPrincipalUsd, setExtraMonthlyPrincipalUsd] = useState(0);
   const [amortizationData, setAmortizationData] = useState(null);
 
-  // Investment simulation state
-  const [estimatedRentUsd, setEstimatedRentUsd] = useState(4800);
-  const [appreciationPercent, setAppreciationPercent] = useState(3.5);
+  // Investment simulation state (Nigerian rental yield assumptions)
+  const [estimatedRentUsd, setEstimatedRentUsd] = useState(2500000);
+  const [appreciationPercent, setAppreciationPercent] = useState(12.0);
   const [vacancyPercent, setVacancyPercent] = useState(5);
   const [yieldData, setYieldData] = useState(null);
 
@@ -234,7 +247,7 @@ export default function App() {
           <div>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <h1 className="text-sm sm:text-lg font-extrabold text-white tracking-tight font-heading">
-                ArcConsult <span className="gradient-text-emerald">Analytics</span>
+                ArcConsult <span className="gradient-text-emerald">Nigeria</span>
               </h1>
               <button
                 type="button"
@@ -246,7 +259,7 @@ export default function App() {
               </button>
             </div>
             <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block">
-              Geospatial Vector Discovery • PostGIS Engine • 30-Year Mortgage & Yield Projections
+              Geospatial Vector Discovery • PostGIS Engine • Lagos & Abuja 20-Year Mortgage & Yield Analytics
             </p>
           </div>
         </div>
@@ -440,7 +453,7 @@ export default function App() {
                       {/* Floating Price on Image */}
                       <div className="absolute bottom-1.5 left-2">
                         <span className="font-extrabold text-emerald-400 font-mono text-sm drop-shadow-md">
-                          ${(prop.price_cents / 100).toLocaleString()}
+                          {formatNaira(prop.price_cents / 100)}
                         </span>
                       </div>
                     </div>
@@ -460,10 +473,10 @@ export default function App() {
                         <span>•</span>
                         <span>{prop.bathrooms} ba</span>
                         <span>•</span>
-                        <span>{prop.square_feet} sqft</span>
+                        <span>{prop.square_feet?.toLocaleString()} sqft</span>
                       </div>
                       <span className="text-[10px] text-emerald-400 font-mono font-semibold">
-                        Austin, TX
+                        {prop.city}, Nigeria
                       </span>
                     </div>
                   </div>
@@ -632,7 +645,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => {
-                      const shareText = `${selectedProperty.title} - ${selectedProperty.street_address}, ${selectedProperty.city}: $${(selectedProperty.price_cents / 100).toLocaleString()}`;
+                      const shareText = `${selectedProperty.title} - ${selectedProperty.street_address}, ${selectedProperty.city}: ₦${(selectedProperty.price_cents / 100).toLocaleString()}`;
                       navigator.clipboard.writeText(shareText);
                       setCopiedAddress(true);
                       setTimeout(() => setCopiedAddress(false), 2000);
@@ -663,7 +676,7 @@ export default function App() {
                   <div>
                     <span className="text-[9px] sm:text-[10px] text-slate-400 block">Price</span>
                     <span className="font-extrabold text-emerald-400 font-mono text-xs sm:text-sm">
-                      ${(selectedProperty.price_cents / 100).toLocaleString()}
+                      ₦{(selectedProperty.price_cents / 100).toLocaleString()}
                     </span>
                   </div>
                   <div>
@@ -687,10 +700,10 @@ export default function App() {
                 {/* HOA and Annual Property Tax */}
                 <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 px-1">
                   <span>
-                    Est. HOA: <strong className="text-slate-200">${(selectedProperty.estimated_hoa_monthly_cents / 100).toLocaleString()}/mo</strong>
+                    Service Charge: <strong className="text-slate-200">₦{(selectedProperty.estimated_hoa_monthly_cents / 100).toLocaleString()}/mo</strong>
                   </span>
                   <span>
-                    Annual Taxes: <strong className="text-slate-200">${(selectedProperty.annual_property_tax_cents / 100).toLocaleString()}/yr</strong>
+                    Lagos LUC: <strong className="text-slate-200">₦{(selectedProperty.annual_property_tax_cents / 100).toLocaleString()}/yr</strong>
                   </span>
                 </div>
               </div>
@@ -781,7 +794,7 @@ export default function App() {
             <div className="flex-1 min-w-0">
               <span className="text-[10px] text-emerald-400 uppercase font-mono font-bold block">Selected Listing</span>
               <p className="text-xs font-bold text-white truncate">{selectedProperty.title}</p>
-              <p className="text-xs font-mono font-extrabold text-emerald-400">${(selectedProperty.price_cents / 100).toLocaleString()}</p>
+              <p className="text-xs font-mono font-extrabold text-emerald-400">₦{(selectedProperty.price_cents / 100).toLocaleString()}</p>
             </div>
             <button
               onClick={() => setMobileViewTab('ANALYTICS')}
@@ -799,7 +812,7 @@ export default function App() {
         <div className="max-w-[1680px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>ArcConsult Global • Enterprise Real Estate & Quantitative Mortgages</span>
+            <span>ArcConsult Nigeria • West Africa Enterprise Real Estate & Mortgages Portal</span>
           </div>
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <button
@@ -819,12 +832,12 @@ export default function App() {
             <button
               type="button"
               onClick={() => {
-                setFocusLocation({ lat: 30.2672, lng: -97.7431, zoom: 13 });
+                setFocusLocation({ lat: 6.4474, lng: 3.4350, zoom: 13 });
                 if (window.innerWidth < 1024) setMobileViewTab('MAP');
               }}
               className="text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
             >
-              Recenter Austin Metro
+              Recenter Lagos Hub
             </button>
           </div>
         </div>
@@ -941,7 +954,7 @@ export default function App() {
             {/* Lightbox Footer */}
             <div className="flex items-center justify-between p-3.5 bg-slate-900/60 border-t border-white/10 text-xs text-slate-300">
               <span className="font-mono text-emerald-400 font-bold text-sm">
-                ${(selectedProperty.price_cents / 100).toLocaleString()}
+                ₦{(selectedProperty.price_cents / 100).toLocaleString()}
               </span>
               <div className="flex items-center gap-3 text-slate-400">
                 <span>{selectedProperty.bedrooms} Beds</span>

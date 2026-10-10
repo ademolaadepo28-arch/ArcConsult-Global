@@ -10,8 +10,8 @@ export default function PropertyMap({
   onSelectProperty,
   onBoundsChange,
   searchMode = 'BBOX',
-  radiusMeters = 10000,
-  centerCoords = { lat: 30.2672, lng: -97.7431 },
+  radiusMeters = 25000,
+  centerCoords = { lat: 6.4474, lng: 3.4350 },
   schools = [],
   executionTimeMs = 0,
   engineInfo = '',
@@ -131,7 +131,13 @@ export default function PropertyMap({
   const handleZoomIn = () => mapInstanceRef.current?.zoomIn();
   const handleZoomOut = () => mapInstanceRef.current?.zoomOut();
   const handleResetCenter = () => {
-    mapInstanceRef.current?.flyTo([30.2672, -97.7431], 13);
+    mapInstanceRef.current?.flyTo([6.4474, 3.4350], 13);
+  };
+  const handleFlyToLagos = () => {
+    mapInstanceRef.current?.flyTo([6.4474, 3.4350], 13);
+  };
+  const handleFlyToAbuja = () => {
+    mapInstanceRef.current?.flyTo([9.0882, 7.4983], 13);
   };
 
   return (
@@ -155,9 +161,30 @@ export default function PropertyMap({
       <div className="absolute top-4 left-4 z-[1000] flex flex-wrap items-center gap-2 pointer-events-auto">
         <div className="glass-panel px-3 py-1.5 flex items-center gap-2 text-xs font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-emerald-400 font-semibold">PostGIS Vector Engine</span>
+          <span className="text-emerald-400 font-semibold">Nigeria PostGIS Engine</span>
           <span className="text-white/30">•</span>
           <span className="text-slate-300 font-mono">{executionTimeMs}ms</span>
+        </div>
+
+        {/* Metro Quick Switchers */}
+        <div className="glass-panel p-0.5 flex items-center text-xs">
+          <button
+            type="button"
+            onClick={handleFlyToLagos}
+            className="px-2.5 py-1 rounded-lg text-emerald-400 hover:bg-emerald-500/10 font-semibold transition-colors cursor-pointer"
+            title="Focus Lagos Metro (Island, Ikoyi, Lekki)"
+          >
+            Lagos Hub
+          </button>
+          <span className="text-white/20">|</span>
+          <button
+            type="button"
+            onClick={handleFlyToAbuja}
+            className="px-2.5 py-1 rounded-lg text-cyan-400 hover:bg-cyan-500/10 font-semibold transition-colors cursor-pointer"
+            title="Focus Abuja FCT (Maitama)"
+          >
+            Abuja Hub
+          </button>
         </div>
 
         <button

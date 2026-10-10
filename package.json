@@ -9,6 +9,7 @@
     "client": "cd client && npm run dev",
     "build": "cd client && npm run build",
     "test": "cd server && npm test",
+    "test:rapidapi": "cd server && npm run test:rapidapi",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install"
   },
   "devDependencies": {

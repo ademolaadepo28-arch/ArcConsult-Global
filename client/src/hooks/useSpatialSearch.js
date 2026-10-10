@@ -14,8 +14,8 @@ export function useSpatialSearch(initialFilters = {}) {
   const [engineInfo, setEngineInfo] = useState('');
 
   const [searchMode, setSearchMode] = useState('BBOX'); // 'BBOX' or 'RADIUS'
-  const [radiusMeters, setRadiusMeters] = useState(10000); // 10km default
-  const [centerCoords, setCenterCoords] = useState({ lat: 30.2672, lng: -97.7431 }); // Austin, TX
+  const [radiusMeters, setRadiusMeters] = useState(25000); // 25km default
+  const [centerCoords, setCenterCoords] = useState({ lat: 6.4474, lng: 3.4350 }); // Lagos, Nigeria
   const [currentBounds, setCurrentBounds] = useState(null);
 
   const [filters, setFilters] = useState({

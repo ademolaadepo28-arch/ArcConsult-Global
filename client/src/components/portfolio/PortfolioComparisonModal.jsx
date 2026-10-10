@@ -19,11 +19,11 @@ export default function PortfolioComparisonModal({
       'Property Title',
       'Address',
       'Property Type',
-      'Price (USD)',
+      'Price (NGN)',
       'Beds',
       'Baths',
       'Square Feet',
-      'Price/SqFt',
+      'Price/SqFt (NGN)',
       'Monthly Payment',
       'Gross Rental Yield (%)',
       'Net Cap Rate (%)',
@@ -142,7 +142,7 @@ export default function PortfolioComparisonModal({
                       </div>
                       <div className="absolute bottom-2 left-2">
                         <span className="text-sm font-extrabold text-emerald-400 font-mono">
-                          ${c.priceUsd.toLocaleString()}
+                          ₦{c.priceUsd.toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -153,14 +153,14 @@ export default function PortfolioComparisonModal({
                         <p className="text-[11px] text-slate-400">{c.street_address}</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-slate-400 block">${c.pricePerSqFtUsd}/sqft</span>
+                        <span className="text-[10px] text-slate-400 block">₦{c.pricePerSqFtUsd.toLocaleString()}/sqft</span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-xs bg-slate-900/60 p-2.5 rounded-xl border border-white/5 font-mono">
                       <div>
-                        <span className="text-[10px] text-slate-400 block font-sans">Monthly PITI</span>
-                        <span className="text-white font-bold">${Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo</span>
+                        <span className="text-[10px] text-slate-400 block font-sans">Monthly P&I</span>
+                        <span className="text-white font-bold">₦{Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo</span>
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-400 block font-sans">Gross Yield</span>
@@ -223,7 +223,7 @@ export default function PortfolioComparisonModal({
                       <td className="py-2.5 px-3.5 font-medium text-slate-400">Listing Price</td>
                       {comparisons.map((c) => (
                         <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-emerald-300 text-sm">
-                          ${c.priceUsd.toLocaleString()}
+                          ₦{c.priceUsd.toLocaleString()}
                         </td>
                       ))}
                     </tr>
@@ -244,10 +244,10 @@ export default function PortfolioComparisonModal({
                       ))}
                     </tr>
                     <tr className="hover:bg-white/5">
-                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Living Area & $/SqFt</td>
+                      <td className="py-2.5 px-3.5 font-medium text-slate-400">Living Area & ₦/SqFt</td>
                       {comparisons.map((c) => (
                         <td key={c.id} className="py-2.5 px-3.5 font-mono text-slate-200">
-                          {c.square_feet.toLocaleString()} sqft (${c.pricePerSqFtUsd}/sqft)
+                          {c.square_feet.toLocaleString()} sqft (₦{c.pricePerSqFtUsd.toLocaleString()}/sqft)
                         </td>
                       ))}
                     </tr>
@@ -255,7 +255,7 @@ export default function PortfolioComparisonModal({
                       <td className="py-2.5 px-3.5 font-medium text-slate-300">Est. Monthly Payment</td>
                       {comparisons.map((c) => (
                         <td key={c.id} className="py-2.5 px-3.5 font-mono font-extrabold text-white text-sm">
-                          ${Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo
+                          ₦{Math.round(c.monthlyPaymentUsd).toLocaleString()}/mo
                         </td>
                       ))}
                     </tr>
@@ -287,7 +287,7 @@ export default function PortfolioComparisonModal({
                       <td className="py-2.5 px-3.5 font-medium text-slate-400">Monthly Net Cash Flow</td>
                       {comparisons.map((c) => (
                         <td key={c.id} className="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
-                          ${Math.round(c.monthlyCashFlowUsd).toLocaleString()}/mo
+                          ₦{Math.round(c.monthlyCashFlowUsd).toLocaleString()}/mo
                         </td>
                       ))}
                     </tr>

@@ -21,10 +21,10 @@ const PROPERTY_TYPES = [
 ];
 
 const PRICE_PRESETS = [
-  { label: '< $750k', min: '', max: '750000' },
-  { label: '$750k - $1M', min: '750000', max: '1000000' },
-  { label: '$1M - $1.5M', min: '1000000', max: '1500000' },
-  { label: '$1.5M+', min: '1500000', max: '' }
+  { label: '< ₦600M', min: '', max: '600000000' },
+  { label: '₦600M - ₦1.5B', min: '600000000', max: '1500000000' },
+  { label: '₦1.5B - ₦2.5B', min: '1500000000', max: '2500000000' },
+  { label: '₦2.5B+', min: '2500000000', max: '' }
 ];
 
 export default function FilterDrawer({
@@ -142,7 +142,7 @@ export default function FilterDrawer({
               <input
                 type="range"
                 min="2000"
-                max="30000"
+                max="45000"
                 step="1000"
                 value={radiusMeters}
                 onChange={(e) => onRadiusChange(Number(e.target.value))}
@@ -150,8 +150,8 @@ export default function FilterDrawer({
               />
               <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                 <span>2 km</span>
-                <span>15 km</span>
-                <span>30 km</span>
+                <span>20 km</span>
+                <span>45 km</span>
               </div>
             </div>
           )}
@@ -187,8 +187,8 @@ export default function FilterDrawer({
           <div>
             <label className="text-slate-300 font-medium block mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Price Range (USD):</span>
+                <span className="text-emerald-400 font-bold font-mono">₦</span>
+                <span>Price Range (₦ Naira):</span>
               </span>
               {(filters.minPrice || filters.maxPrice) && (
                 <button
@@ -233,20 +233,20 @@ export default function FilterDrawer({
 
             <div className="grid grid-cols-2 gap-2">
               <div className="relative">
-                <span className="absolute left-2.5 top-2 text-slate-500">$</span>
+                <span className="absolute left-2.5 top-2 text-slate-500 font-bold">₦</span>
                 <input
                   type="number"
-                  placeholder="Min Price"
+                  placeholder="Min Price (₦)"
                   value={filters.minPrice || ''}
                   onChange={(e) => onFilterChange({ minPrice: e.target.value })}
                   className="form-input text-xs pl-6"
                 />
               </div>
               <div className="relative">
-                <span className="absolute left-2.5 top-2 text-slate-500">$</span>
+                <span className="absolute left-2.5 top-2 text-slate-500 font-bold">₦</span>
                 <input
                   type="number"
-                  placeholder="Max Price"
+                  placeholder="Max Price (₦)"
                   value={filters.maxPrice || ''}
                   onChange={(e) => onFilterChange({ maxPrice: e.target.value })}
                   className="form-input text-xs pl-6"

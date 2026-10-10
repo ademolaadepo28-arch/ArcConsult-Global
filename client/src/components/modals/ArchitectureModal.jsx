@@ -73,7 +73,7 @@ export default function ArchitectureModal({
                 <span className="badge-tag badge-emerald text-[10px]">Production Spec</span>
               </div>
               <p className="text-xs text-slate-400">
-                PostGIS Spatial Vector Engine • 30-Year Integer Precision Amortization
+                PostGIS Spatial Vector Engine • Lagos & Abuja Metro • 20-Year Integer Precision Amortization
               </p>
             </div>
           </div>
@@ -229,7 +229,7 @@ ORDER BY distance_meters ASC;`}
                   <li><strong className="text-white">P:</strong> Principal Loan Amount (Purchase Price minus Down Payment)</li>
                   <li><strong className="text-white">i:</strong> Monthly interest rate (<code className="text-cyan-300">annualRate / 12 / 100</code>)</li>
                   <li><strong className="text-white">n:</strong> Total number of amortization payments (<code className="text-cyan-300">loanYears × 12</code>)</li>
-                  <li><strong className="text-emerald-400">Zero Floating-Point Drift:</strong> All calculations are executed strictly in integer cents using <code className="text-white bg-black/40 px-1 py-0.5 rounded">Math.round()</code>.</li>
+                  <li><strong className="text-emerald-400">Zero Floating-Point Drift:</strong> All calculations are executed strictly in integer kobo/cents using <code className="text-white bg-black/40 px-1 py-0.5 rounded">Math.round()</code>.</li>
                 </ul>
               </div>
 

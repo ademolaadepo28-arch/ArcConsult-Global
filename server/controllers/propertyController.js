@@ -35,8 +35,8 @@ async function getProperties(req, res) {
     } else if (lat && lng) {
       properties = await spatialService.searchByRadius(Number(lng), Number(lat), Number(radius), filters);
     } else {
-      // Default Austin downtown center radius 15km
-      properties = await spatialService.searchByRadius(-97.7431, 30.2672, 15000, filters);
+      // Default Lagos metropolitan center (Victoria Island / Ikoyi / Lekki hub) radius 35km
+      properties = await spatialService.searchByRadius(3.4350, 6.4474, 35000, filters);
     }
 
     const durationMs = Date.now() - startTime;
